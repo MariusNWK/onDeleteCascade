@@ -1,0 +1,5012 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+enum EContractTypeEnum {
+  CUI
+  CAE
+}
+
+model A {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 String @unique @db.VarChar(255)
+
+  field2 E[]
+}
+
+model B {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(1000)
+
+  field2 Int
+  field3 E    @relation(fields: [field2], references: [id], onDelete: Cascade)
+  field4 Int
+  field5 User @relation("CreatedByEComment", fields: [field4], references: [id], onDelete: Cascade)
+
+  @@index([field4])
+  @@index([field2])
+}
+
+enum ETypeEnum {
+  pelletBoiler
+  pelletStove
+  solarWaterHeater
+  thermodynamicWaterHeater
+  externalThermalInsulation
+  photovoltaicPanels
+  highEnergyEfficiencyBoiler
+  atticInsulation
+  airWaterHeatPump
+  airAirHeatPump
+  hybridPanels
+  internalThermalInsulation
+  combinedSolarSystem
+  floorInsulation
+  inverter
+  battery
+  virtualBattery
+  microInverter
+  weightingTray
+}
+
+model C {
+  id Int @id @default(autoincrement())
+
+  field1 ETypeEnum @unique
+  field2 String    @db.VarChar(255)
+
+  field3 E[]
+  field4 AA[]
+  field5 BL[] @relation("BLProductTypes")
+}
+
+enum EDocumentTypeEnum {
+  technical
+  business
+  other
+}
+
+model D {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 String?           @db.VarChar(255)
+  field2 EDocumentTypeEnum
+
+  field3 E   @relation(fields: [field4], references: [id], onDelete: Cascade)
+  field4 Int
+
+  @@index([field4])
+}
+
+enum BatteryTypeEnum {
+  YES
+  VIRTUAL
+  NO
+}
+
+model E {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 Float?
+  field2 String @unique @db.VarChar(255)
+  field3 String @db.VarChar(1000)
+  field4 Float?
+
+  field5  Int
+  field6  C    @relation(fields: [field5], references: [id])
+  field7  Int
+  field8  User @relation("ECreator", fields: [field7], references: [id])
+  field9  Int
+  field10 User @relation("EUpdater", fields: [field9], references: [id])
+  field11 Int
+  field12 A    @relation(fields: [field11], references: [id])
+
+  field13 D[]
+  field14 B[]
+  field15 W[]
+  field16 AB[]
+  field17 R[]
+  field18 BH[]
+  field19 BV[] @relation("AttachedBatteryConnector")
+  field20 BV[] @relation("AttachedInverterConnector")
+  field21 BV[] @relation("AttachedInverter2Connector")
+  field22 CD[] @relation("AttachedBatteryConsultant")
+  field23 CD[] @relation("AttachedInverterConsultant")
+  field24 CD[] @relation("AttachedInverter2Consultant")
+  field25 EG[]
+  field26 EN[]
+  field27 EU[]
+  field28 BL[]
+
+  @@index([field11])
+  @@index([field5])
+  @@index([field7])
+  @@index([field9])
+}
+
+model UserComment {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  message String @db.VarChar(1000)
+
+  userId      Int
+  user        User @relation("UserConcernedComment", fields: [userId], references: [id], onDelete: Cascade)
+  createdById Int
+  createdBy   User @relation("CreatedByComment", fields: [createdById], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdById])
+}
+
+enum FEnum {
+  RECUP_VAT
+  PHOTOVOLTAIC_PROCEDURES
+  RECUP_VAT_TAX
+  RECUP_VAT_INSEE
+  RECUP_VAT_EDF
+  MAIL
+  ITE_SSC
+  PRIME_RENOV
+  CONSULTANT_CONNECTION
+  ACCOUNTING
+  LEGAL
+  PRIME_PREMIUM
+  PRIME_CEE
+  RECUP_MPR
+  VD2E_ISOLATION
+  BENJAMIN_SABBA
+  CONTACT
+  DAVID_BENAYOUN
+  PRIMES_DEDUCTION
+  DIRECTION
+  DP_POOL
+  HR
+  PRO_SPACE
+  VERLAINE_GROUP
+  INFORMATIONS
+  JPME
+  LAURENT_A
+  NOREPLY
+  DP_RETURN
+  SERVICE_CLIENT
+}
+
+model F {
+  id Int @id @default(autoincrement())
+
+  field1 FEnum   @unique
+  field2 String? @db.VarChar(100)
+
+  field3 User[] @relation("attachedUserEmail")
+  field4 User[] @relation("attachedUserEmail2")
+}
+
+enum UserDocumentTypeEnum {
+  profilePicture
+  tofes
+  sefar
+  contract
+  identityCard
+  otherUser
+}
+
+model UserDocument {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  url  String?              @db.VarChar(255)
+  type UserDocumentTypeEnum
+
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int
+
+  @@index([userId])
+}
+
+enum ClockingLocationEnum {
+  HOME
+  OFFICE
+}
+
+enum GStatusEnum {
+  AWAITING_VALIDATION
+  VALIDATED
+}
+
+model G {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 GStatusEnum           @default(VALIDATED)
+  field2 DateTime
+  field3 DateTime?
+  field4 ClockingLocationEnum?
+  field5 Boolean               @default(false)
+  field6 Boolean               @default(false)
+  field7 String?               @db.VarChar(255)
+  field8 Float?
+  field9 Float?
+
+  field10 Int
+  field11 User @relation("G", fields: [field10], references: [id], onDelete: Cascade)
+
+  @@index([field10])
+}
+
+model H {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 DateTime
+  field2 Int
+  field3 String?  @db.VarChar(255)
+
+  field4 Int
+  field5 User @relation("H", fields: [field4], references: [id], onDelete: Cascade)
+
+  @@index([field4])
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  firstName          String              @db.VarChar(255)
+  lastName           String              @db.VarChar(255)
+  gender             GenderEnum
+  pseudo             String              @unique @db.VarChar(255)
+  phone              String              @unique @db.VarChar(50)
+  birthDate          DateTime
+  personalEmail      String              @unique @db.VarChar(255)
+  type               UserTypeEnum
+  numPost            String?             @unique @db.VarChar(4)
+  numPost2           String?             @db.VarChar(4)
+  borrowedFirstName  String              @db.VarChar(255)
+  borrowedLastName   String              @db.VarChar(255)
+  entryDate          DateTime
+  password           String              @db.VarChar(255)
+  isAccountActivated Boolean             @default(false)
+  isBlocked          Boolean             @default(false)
+  role               String              @default("Rôle employé") @db.VarChar(255)
+  schedule           Json?
+  teoudatZeoutNumber String?             @db.VarChar(255)
+  accountingNumber   String?             @unique @db.VarChar(255)
+  salary             Float?
+  salaryType         UserSalaryTypeEnum?
+
+  managedById      Int?
+  managedBy        User? @relation("ManagedBy", fields: [managedById], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  attachedEmailId  Int?
+  attachedEmail    F?    @relation("attachedUserEmail", fields: [attachedEmailId], references: [id], onDelete: NoAction)
+  attachedEmail2Id Int?
+  attachedEmail2   F?    @relation("attachedUserEmail2", fields: [attachedEmail2Id], references: [id], onDelete: NoAction)
+  createdById      Int?
+  createdBy        User? @relation("CreatedBy", fields: [createdById], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  updatedById      Int?
+  updatedBy        User? @relation("UpdatedBy", fields: [updatedById], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  documents                            UserDocument[]
+  managers                             User[]          @relation("ManagedBy")
+  creators                             User[]          @relation("CreatedBy")
+  updators                             User[]          @relation("UpdatedBy")
+  histories                            UserHistory[]   @relation("UserConcernedHistory")
+  createdByHistories                   UserHistory[]   @relation("CreatedByHistory")
+  comments                             UserComment[]   @relation("UserConcernedComment")
+  createdByComments                    UserComment[]   @relation("CreatedByComment")
+  productComments                      B[]             @relation("CreatedByEComment")
+  fitterComments                       S[]             @relation("CreatedByRComment")
+  productCreator                       E[]             @relation("ECreator")
+  fitterCreator                        R[]             @relation("RCreator")
+  productUpdater                       E[]             @relation("EUpdater")
+  fitterUpdater                        R[]             @relation("RUpdater")
+  productHistories                     W[]
+  fitterHistories                      X[]
+  approachTypes                        N[]
+  residentCreator                      AF[]            @relation("AFCreator")
+  residentUpdater                      AF[]            @relation("AFUpdater")
+  lobbyCreator                         AI[]            @relation("AICreator")
+  cityHallCreator                      AM[]            @relation("CityHallCreator")
+  cityHallUpdater                      AM[]            @relation("CityHallUpdater")
+  cityHallComments                     AL[]            @relation("CreatedByAL")
+  taxCenterComments                    AU[]            @relation("CreatedByAU")
+  connectorComment                     AR[]            @relation("CreatedByAR")
+  connectorCreator                     AS[]            @relation("ConnectorCreator")
+  connectorUpdater                     AS[]            @relation("ConnectorUpdater")
+  taxCenterCreator                     AW[]            @relation("TaxCenterCreator")
+  taxCenterUpdater                     AW[]            @relation("TaxCenterUpdater")
+  lobbyHistories                       AH[]
+  residentHistories                    AG[]
+  cityHallApproachCreator              BH[]            @relation("BHCreator")
+  cityHallApproachUpdater              BH[]            @relation("BHUpdater")
+  connectorApproachCreator             BV[]            @relation("ConnectorApproachCreator")
+  connectorApproachUpdater             BV[]            @relation("ConnectorApproachUpdater")
+  consultantApproachCreator            CD[]            @relation("ConsultantApproachCreator")
+  consultantApproachUpdater            CD[]            @relation("ConsultantApproachUpdater")
+  calpinageApproachCreator             CK[]            @relation("CalpinageApproachCreator")
+  calpinageApproachUpdater             CK[]            @relation("CalpinageApproachUpdater")
+  tvaApproachCreator                   CV[]            @relation("TvaApproachCreator")
+  tvaApproachUpdater                   CV[]            @relation("TvaApproachUpdater")
+  cityHallHistories                    AN[]            @relation("CityHallCreatedByHistory")
+  connectorHistories                   AP[]            @relation("ConnectorCreatedByHistory")
+  taxCenterHistories                   AV[]            @relation("TaxCenterCreatedByHistory")
+  instanceCreator                      DL[]            @relation("InstanceCreator")
+  instanceUpdater                      DL[]            @relation("InstanceUpdater")
+  instanceHandledBy                    DL[]            @relation("InstanceHandledBy")
+  instanceTasks                        DD[]            @relation("TaskHandledBy")
+  cityHallApproach                     BH[]            @relation("BHAttributedUser")
+  cityHallApproachComments             BD[]            @relation("CreatedByBD")
+  cityHallApproachHistories            BE[]            @relation("BHCreatedByHistory")
+  instanceComments                     DF[]            @relation("CreatedByInstanceComment")
+  instanceHistories                    DG[]
+  incompleteFeedbackCreator            DE[]            @relation("IncompleteFeedbackCreator")
+  incompleteFeedbackCompletor          DE[]            @relation("IncompleteFeedbackCompletor")
+  connectorApproach                    BV[]            @relation("ConnectorApproachAttributedUser")
+  connectorApproachComments            BS[]            @relation("CreatedByConnectorApproachComment")
+  connectorApproachHistories           BT[]            @relation("ConnectorApproachCreatedByHistory")
+  consultantApproach                   CD[]            @relation("ConsultantApproachAttributedUser")
+  consultantApproachComments           BZ[]            @relation("CreatedByConsultantApproachComment")
+  consultantApproachHistories          CA[]            @relation("ConsultantApproachCreatedByHistory")
+  consultantApproachObservationCreator CC[]            @relation("CreatedByConsultantApproachObservationComment")
+  calpinageApproach                    CK[]            @relation("CalpinageApproachAttributedUser")
+  calpinageApproachComments            CI[]            @relation("CreatedByCalpinageApproachComment")
+  calpinageApproachHistories           CJ[]            @relation("CalpinageApproachCreatedByHistory")
+  tvaApproach                          CV[]            @relation("TvaApproachAttributedUser")
+  tvaApproachGeneralComments           CO[]            @relation("CreatedByTvaApproachGeneralComment")
+  tvaApproachTaxesComments             CQ[]            @relation("CreatedByTvaApproachTaxesComment")
+  tvaApproachEDFComments               CS[]            @relation("CreatedByTvaApproachEDFComment")
+  tvaApproachHistories                 CT[]            @relation("TvaApproachCreatedByHistory")
+  automaticInstanceCreator             DP[]            @relation("AutomaticInstanceCreator")
+  automaticInstanceUpdater             DP[]            @relation("AutomaticInstanceUpdater")
+  automaticInstanceHandledBy           DP[]            @relation("AutomaticInstanceHandledBy")
+  automaticInstanceTasks               DN[]            @relation("AutomaticTaskHandledBy")
+  approachStatusChanges                DQ[]            @relation("ApproachStatusChangeUser")
+  classicShortcuts                     DS[]
+  filterShortcuts                      DT[]
+  suggestions                          DX[]            @relation("CreatedBySuggestion")
+  upvotedSuggestions                   DX[]            @relation("UpvotedBySuggestions")
+  filterShortcutCategories             DY[]
+  notificationsCreator                 DZ[]            @relation("NotificationCreator")
+  notificationsTarget                  DZ[]            @relation("NotificationTarget")
+  isolationApproachCreator             EG[]            @relation("IsolationApproachCreator")
+  isolationApproachUpdater             EG[]            @relation("IsolationApproachUpdater")
+  isolationApproach                    EG[]            @relation("IsolationApproachAttributedUser")
+  instanceTemplateCreator              DA[]            @relation("InstanceTemplateCreator")
+  instanceTemplateUpdater              DA[]            @relation("InstanceTemplateUpdater")
+  instanceTemplateHandledBy            DA[]            @relation("InstanceTemplateHandledBy")
+  instanceTemplateTasks                CZ[]            @relation("InstanceTemplateTaskHandledBy")
+  isolationApproachHistories           ED[]            @relation("IsolationApproachCreatedByHistory")
+  isolationApproachComments            EF[]            @relation("CreatedByIsolationApproachComment")
+  sscApproachComments                  EK[]            @relation("CreatedBySscApproachComment")
+  sscApproachHistories                 EL[]            @relation("SscApproachCreatedByHistory")
+  sscApproach                          EN[]            @relation("SscApproachAttributedUser")
+  sscApproachCreator                   EN[]            @relation("SscApproachCreator")
+  sscApproachUpdater                   EN[]            @relation("SscApproachUpdater")
+  pacApproachComments                  ER[]            @relation("CreatedByPacApproachComment")
+  pacApproachHistories                 ES[]            @relation("PacApproachCreatedByHistory")
+  pacApproach                          EU[]            @relation("PacApproachAttributedUser")
+  pacApproachCreator                   EU[]            @relation("PacApproachCreator")
+  pacApproachUpdater                   EU[]            @relation("PacApproachUpdater")
+  primeRenovApproachCreator            BL[]            @relation("HRenovApproachCreator")
+  primeRenovApproachUpdater            BL[]            @relation("HRenovApproachUpdater")
+  primeRenovApproach                   BL[]            @relation("HRenovApproachAttributedUser")
+  primeRenovApproachComments           BP[]            @relation("CreatedByHRenovApproachComment")
+  primeRenovApproachHistories          BN[]            @relation("HRenovApproachCreatedByHistory")
+  scheduledEmails                      DH[]            @relation("ScheduledEmailCreator")
+  billingExportHistory                 AX[]            @relation("BillingExportCreatedByHistory")
+  billingImportHistory                 AY[]            @relation("BillingImportCreatedByHistory")
+  userGroups                           EX[]            @relation("EX")
+  approachNotifications                EY[]            @relation("UserNotifiedByApproach")
+  approachRequestComments              FB[]            @relation("CreatedByApproachRequestComment")
+  approachRequestUpdater               FC[]            @relation("ApproachRequestUserUpdater")
+  approachRequestAttributedUser        FC[]            @relation("ApproachRequestAttributedUser")
+  approachRequestHistories             FD[]            @relation("ApproachRequestCreatedByUserHistory")
+  smsTemplateHistories                 FG[]            @relation("SmsTemplateCreatedByHistory")
+  smsTemplateCreatedBy                 FF[]            @relation("SmsTemplateCreatedBy")
+  smsTemplateUpdatedBy                 FF[]            @relation("SmsTemplateUpdatedBy")
+  approachStateChangesHistory          EW[]            @relation("ApproachStateChangeHistoryUser")
+  clockingSessions                     G[]             @relation("G")
+  timeOffPeriods                       TimeOffPeriod[] @relation("TimeOffPeriod")
+  absenceReasons                       AbsenceReason[] @relation("AbsenceReason")
+  primes                               H[]             @relation("H")
+  instanceReminderEmailCreatedBy       DV[]            @relation("InstanceReminderEmailCreatedBy")
+
+  @@index([managedById])
+  @@index([attachedEmail2Id])
+  @@index([attachedEmailId])
+  @@index([createdById])
+  @@index([updatedById])
+}
+
+model I {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 String @db.VarChar(255)
+  field2 String @db.VarChar(255)
+
+  field3 L[]
+}
+
+model J {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 ApproachTypeEnum
+
+  field2 Int
+  field3 L   @relation(fields: [field2], references: [id], onDelete: Cascade)
+
+  @@index([field2])
+}
+
+model K {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 UserTypeEnum
+
+  field2 Int
+  field3 L   @relation(fields: [field2], references: [id], onDelete: Cascade)
+
+  @@index([field2])
+}
+
+model L {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(255)
+  field2 String @db.VarChar(2000)
+
+  field3 Int
+  field4 I   @relation(fields: [field3], references: [id])
+
+  field5 J[]
+  field6 K[]
+
+  @@index([field3])
+}
+
+enum TimeOffTypeEnum {
+  SICKNESS
+  CHILD_SICKNESS
+  PAID_TIME_OFF
+  FAMILY_BEREAVEMENT
+  MILOUIM
+}
+
+model TimeOffPeriod {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  startDate      DateTime
+  endDate        DateTime
+  monthOfTimeOff DateTime
+  numberOfDays   Int
+  comment        String?         @db.VarChar(255)
+  timeOffType    TimeOffTypeEnum
+
+  userId Int
+  user   User @relation("TimeOffPeriod", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model AbsenceReason {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  absenceDate DateTime
+  reason      String   @db.VarChar(255)
+
+  userId Int
+  user   User @relation("AbsenceReason", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+enum EmployeeRoleEnum {
+  LEADER
+  SECRETARY
+  RESPONSIBLE
+  COMMERCIAL_SERVICE
+  ADMINISTRATIVE
+  ACCOUNTING
+  OTHER
+  GENERAL
+}
+
+enum OrganismRelationRoleEnum {
+  ADMINISTRATIVE
+  FOLLOW_UP
+  GLOBAL
+  TOWN_PLANNING
+  INSTRUCTOR
+  COMMISSIONING
+  ACCOUNTING
+  MAYOR
+  SECRETARY
+  DEPUTY_MAYOR
+  ABF
+  ABF_INSTRUCTOR
+  UDAP
+  DRAC
+  DDT
+  MUNICIPALITIES_COMMUNITY
+  ANNEX_INSTRUCTION_COMPANY
+  OTHERS
+  FINANCIAL_INSPECTOR
+  CONTROLLER
+  AGENT
+}
+
+enum CerfaCreationEnum {
+  P0
+  P2
+}
+
+model M {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1  String?   @db.VarChar(5)
+  field2  String?   @db.VarChar(255)
+  field3  String?   @db.VarChar(255)
+  field4  String?   @db.VarChar(255)
+  field5  String?   @db.VarChar(255)
+  field6  String?   @db.VarChar(255)
+  field7  String?   @db.VarChar(255)
+  field8  String?   @db.VarChar(255)
+  field9  DateTime
+  field10 DateTime?
+
+  field11 Int
+  field12 R   @relation(fields: [field11], references: [id], onDelete: Cascade)
+
+  field13 AA[]
+
+  @@index([field11])
+}
+
+enum ApproachTypeEnum {
+  CITYHALL
+  CONSULTANT
+  CONNECTOR
+  CALPINAGE
+  ISOLATION
+  TVA
+  SSC
+  PAC
+  PRIME_RENOV
+}
+
+// TODO: better do like AB
+model N {
+  id Int @id @default(autoincrement())
+
+  field1 ApproachTypeEnum @unique
+
+  field2 User[]
+}
+
+enum LegalFormEnum {
+  SASU
+  SAS
+  SARL
+  EURL
+  SCI
+  MICRO_ENTREPRISE
+  AEI
+}
+
+enum RgeTypeEnum {
+  QUALI_BAT
+  QUALIF_ELEC
+  QUALIT_ENR
+  QUALI_PV
+  QUALI_PAC
+  QUALI_EL
+  QUALI_BOIS
+  QUALI_SOL
+}
+
+enum BillingCountryEnum {
+  FRANCE
+  ISRAEL
+}
+
+model O {
+  id Int @id @default(autoincrement())
+
+  field1  Float?
+  field2  Float?
+  field3  Float?
+  field4  Float?
+  field5  Float?
+  field6  Float?
+  field7  Float?
+  field8  Float?
+  field9  Float?
+  field10 Float?
+  field11 Float?
+  field12 Float?
+  field13 Float?
+  field14 Float?
+  field15 Float?
+  field16 Float?
+  field17 Float?
+  field18 Float?
+  field19 Float?
+  field20 Float?
+  field21 Float?
+  field22 Float?
+  field23 Float               @default(20)
+  field24 Float?
+  field25 Float?
+  field26 Float?
+  field27 BillingCountryEnum?
+
+  field28 R?
+}
+
+enum RDocumentTypeEnum {
+  sign
+  logo
+  quitusUrssaf
+  singleSignature
+  transferContract
+  kbis
+  assurDec
+  contractOutsourcing
+  otherR
+}
+
+model P {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 String?           @db.VarChar(255)
+  field2 RDocumentTypeEnum
+
+  field3 R   @relation(fields: [field4], references: [id], onDelete: Cascade)
+  field4 Int
+
+  @@index([field4])
+}
+
+model Q {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 R[] @relation("Q")
+}
+
+model R {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1  String?        @db.VarChar(255)
+  field2  String?        @db.VarChar(255)
+  field3  String         @unique @db.VarChar(255)
+  field4  String         @db.VarChar(50)
+  field5  String         @unique @db.VarChar(255)
+  field6  String?        @db.VarChar(255)
+  field7  Boolean        @default(false)
+  field8  Boolean        @default(false)
+  field9  String?        @db.VarChar(255)
+  field10 String?        @db.VarChar(255)
+  field11 String?        @db.VarChar(255)
+  field12 String?        @db.VarChar(255)
+  field13 String?        @db.VarChar(255)
+  field14 String?        @db.VarChar(255)
+  field15 String?        @db.VarChar(255)
+  field16 Float?
+  field17 Boolean        @default(false)
+  field18 Boolean        @default(false)
+  field19 String?        @db.VarChar(9)
+  field20 String?        @db.VarChar(5)
+  field21 String?        @db.VarChar(13)
+  field22 LegalFormEnum?
+  field23 String?        @db.VarChar(255)
+  field24 DateTime?
+  field25 Boolean        @default(false)
+  field26 Boolean        @default(false)
+
+  field27 Int  @unique
+  field28 O    @relation(fields: [field27], references: [id])
+  field29 Int
+  field30 User @relation("RCreator", fields: [field29], references: [id], onDelete: NoAction)
+  field31 Int
+  field32 User @relation("RUpdater", fields: [field31], references: [id], onDelete: NoAction)
+  field33 Int?
+  field34 R?   @relation("FavoriteSubContractor", fields: [field33], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "R_field33_fkey")
+  field35 Int?
+  field36 Q?   @relation("Q", fields: [field33], references: [id], map: "Q_field33_fkey")
+
+  field37 P[]
+  field38 AB[]
+  field39 Y[]
+  field40 M[]
+  field41 R[]  @relation("FavoriteSubContractor")
+  field42 E[]
+  field43 X[]
+  field44 S[]
+  field45 BH[]
+  field46 BV[]
+  field47 CD[]
+  field48 CK[]
+  field49 CV[]
+  field50 DI[] @relation("REmailPortalTarget")
+  field51 DR[]
+  field52 DS[]
+  field53 DT[]
+  field54 DV[] @relation("RReminderEmailTarget")
+  field55 DY[]
+  field56 EG[]
+  field57 EN[]
+  field58 EU[]
+  field59 BL[]
+  field60 BP[] @relation("CreatedByRHRenovApproachComment")
+  field61 BD[] @relation("CreatedByRBD")
+  field62 BS[] @relation("CreatedByRConnectorApproachComment")
+  field63 BZ[] @relation("CreatedByRConsultantApproachComment")
+  field64 CI[] @relation("CreatedByRCalpinageApproachComment")
+  field65 EF[] @relation("CreatedByRIsolationApproachComment")
+  field66 EK[] @relation("CreatedByRSscApproachComment")
+  field67 ER[] @relation("CreatedByRPacApproachComment")
+  field68 CO[] @relation("CreatedByRTvaApproachGeneralComment")
+  field69 CQ[] @relation("CreatedByRTvaApproachTaxesComment")
+  field70 CS[] @relation("CreatedByRTvaApproachEDFComment")
+  field71 DF[] @relation("CreatedByRInstanceComment")
+  field72 DZ[] @relation("NotificationRTarget")
+  field73 FB[] @relation("CreatedByRApproachRequestComment")
+  field74 FC[] @relation("ApproachRequestCreator")
+  field75 FC[] @relation("ApproachRequestRUpdater")
+  field76 FD[] @relation("ApproachRequestCreatedByRHistory")
+  field77 FI[] @relation("RReminderSmsTarget")
+  field78 BI[]
+  field79 BM[]
+  field80 BW[]
+  field81 CE[]
+  field82 CL[]
+  field83 CW[]
+  field84 EH[]
+  field85 EO[]
+  field86 EV[]
+
+  @@index([field11])
+  @@index([field12])
+  @@index([field13])
+  @@index([field27])
+  @@index([field29])
+  @@index([field31])
+  @@index([field33])
+}
+
+model S {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(1000)
+
+  field2 Int
+  field3 R    @relation(fields: [field2], references: [id], onDelete: Cascade)
+  field4 Int
+  field5 User @relation("CreatedByRComment", fields: [field4], references: [id], onDelete: Cascade)
+
+  @@index([field4])
+  @@index([field2])
+}
+
+model T {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 String @db.VarChar(255)
+  field2 String @db.VarChar(255)
+
+  field3 V[]
+}
+
+model U {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 ApproachTypeEnum
+
+  field2 Int
+  field3 V   @relation(fields: [field2], references: [id], onDelete: Cascade)
+
+  @@index([field2])
+}
+
+model V {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(255)
+  field2 String @db.VarChar(2000)
+
+  field3 Int
+  field4 T   @relation(fields: [field3], references: [id])
+
+  field5 U[]
+
+  @@index([field3])
+}
+
+model W {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(1000)
+
+  field2 Int
+  field3 E    @relation(fields: [field2], references: [id], onDelete: Cascade)
+  field4 Int
+  field5 User @relation(fields: [field4], references: [id], onDelete: Cascade)
+
+  @@index([field2])
+  @@index([field4])
+}
+
+model UserHistory {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  message String @db.VarChar(1000)
+
+  itemId      Int
+  user        User @relation("UserConcernedHistory", fields: [itemId], references: [id], onDelete: Cascade)
+  createdById Int
+  createdBy   User @relation("CreatedByHistory", fields: [createdById], references: [id], onDelete: Cascade)
+
+  @@index([itemId])
+  @@index([createdById])
+}
+
+model X {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(1000)
+
+  field2 Int
+  field3 R    @relation(fields: [field2], references: [id], onDelete: Cascade)
+  field4 Int
+  field5 User @relation(fields: [field4], references: [id], onDelete: Cascade)
+
+  @@index([field2])
+  @@index([field4])
+}
+
+enum GenderEnum {
+  male
+  female
+}
+
+enum UserTypeEnum {
+  worker
+  manager
+  generalManager
+  accounting
+  admin
+}
+
+enum UserSalaryTypeEnum {
+  hourly
+  file
+  hourlyAndFile
+  monthly
+  fixed
+  kitFixed
+}
+
+model Y {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 String            @db.VarChar(255)
+  field2 String            @db.VarChar(255)
+  field3 String            @db.VarChar(50)
+  field4 String?           @db.VarChar(7)
+  field5 String            @unique @db.VarChar(255)
+  field6 EmployeeRoleEnum?
+  field7 Boolean           @default(false)
+  field8 Boolean           @default(false)
+  field9 String?           @db.VarChar(255)
+
+  field10 Int
+  field11 R   @relation(fields: [field10], references: [id], onDelete: Cascade)
+
+  field12 AB[]
+  field13 DI[] @relation("REmployeeEmailPortalTarget")
+  field14 DV[] @relation("REmployeeReminderEmailTarget")
+  field15 FI[] @relation("REmployeeReminderSmsTarget")
+
+  @@index([field10])
+}
+
+enum AADocumentTypeEnum {
+  certification
+}
+
+model Z {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 String             @db.VarChar(255)
+  field2 AADocumentTypeEnum
+
+  field3 AA  @relation(fields: [field4], references: [id], onDelete: Cascade)
+  field4 Int
+
+  @@index([field4])
+}
+
+model AA {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 RgeTypeEnum
+  field2 DateTime
+  field3 DateTime
+  field4 String?     @db.VarChar(255)
+
+  field5 Int
+  field6 M   @relation(fields: [field5], references: [id], onDelete: Cascade)
+
+  field7 Z[]
+  field8 C[]
+
+  @@index([field5])
+}
+
+model AB {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 ApproachTypeEnum
+
+  field2 Int
+  field3 R   @relation(fields: [field2], references: [id], onDelete: Cascade)
+
+  field4 E[]
+  field5 Y[]
+
+  @@index([field2])
+}
+
+enum ACTypeEnum {
+  identityCard
+  electricityBill
+  propertyTax
+  taxNotice
+  otherAF
+}
+
+model AC {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 String?    @db.VarChar(255)
+  field2 ACTypeEnum
+
+  field3 AF  @relation(fields: [field4], references: [id], onDelete: Cascade)
+  field4 Int
+
+  @@index([field4])
+}
+
+enum ADTypeEnum {
+  visitNotice
+  s17s21Attestations
+  craeContract
+  craeContract2
+
+  collectionSheet
+  collectionSheet2
+
+  nonTargetedAttestation
+  targetedAttestation
+
+  purchaseInvoice
+  otherAFApproach
+}
+
+model AD {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 String?    @db.VarChar(255)
+  field2 ADTypeEnum
+
+  field3 AF  @relation(fields: [field4], references: [id], onDelete: Cascade)
+  field4 Int
+
+  @@index([field4])
+}
+
+enum ProfileSourceEnum {
+  taxNotice
+  electricityBill
+  purchaseOrder
+  mandate
+  fitter
+  purchaseInvoice
+}
+
+enum ConnectionTargetEnum {
+  powerIncrease
+  classic
+}
+
+enum ResaleModeEnum {
+  autoconsumption
+  totalResale
+  surplusResale
+}
+
+enum CounterEnum {
+  monophased
+  triphased
+  lockedMonophased
+}
+
+enum AFGenderEnum {
+  male
+  female
+  all
+}
+
+model AE {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(255)
+  field2 String @db.VarChar(255)
+  field3 String @db.VarChar(255)
+
+  field4 AF  @relation(fields: [field5], references: [id], onDelete: Cascade)
+  field5 Int
+
+  @@index([field5])
+}
+
+model AF {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1  String                @db.VarChar(255)
+  field2  String                @db.VarChar(255)
+  field3  String                @default("") @db.VarChar(255)
+  field4  String                @default("") @db.VarChar(255)
+  field5  AFGenderEnum
+  field6  String?               @db.VarChar(255)
+  field7  String?               @db.VarChar(255)
+  field8  String?               @db.VarChar(255)
+  field9  String?               @db.VarChar(255)
+  field10 Int?
+  field11 String?               @db.VarChar(255)
+  field12 String?               @db.VarChar(255)
+  field13 String?               @db.VarChar(50)
+  field14 String?               @db.VarChar(50)
+  field15 ProfileSourceEnum
+  field16 Float?
+  field17 Int?
+  field18 Float?
+  field19 Int?
+  field20 DateTime?
+  field21 String?               @db.VarChar(255)
+  field22 String                @db.VarChar(255)
+  field23 String?               @db.VarChar(255)
+  field24 String                @db.VarChar(255)
+  field25 String?               @db.VarChar(255)
+  field26 String                @db.VarChar(255)
+  field27 String                @db.VarChar(255)
+  field28 String                @db.VarChar(255)
+  field29 Boolean               @default(false)
+  field30 Float?
+  field31 Float?
+  field32 Int?
+  field33 ConnectionTargetEnum?
+  field34 DateTime?
+  field35 YesOrNoEnum?
+  field36 ResaleModeEnum?
+  field37 YesOrNoEnum?
+  field38 String?               @db.VarChar(255)
+  field39 String?               @db.VarChar(9)
+  field40 String?               @db.VarChar(5)
+  field41 Float?
+  field42 String?               @db.VarChar(255)
+  field43 Float?
+  field44 DateTime?
+  field45 String?               @db.VarChar(255)
+  field46 DateTime?
+  field47 DateTime?
+  field48 DateTime?
+  field49 CounterEnum?
+  field50 Float?
+  field51 YesOrNoEnum?
+  field52 String?               @db.VarChar(255)
+  field53 Float?
+  field54 Float?
+  field55 Float?
+  field56 YesOrNoEnum?
+  field57 String?               @db.VarChar(255)
+  field58 Float?
+  field59 Int?
+  field60 ResaleModeEnum?
+  field61 String?               @db.VarChar(255)
+  field62 String?               @db.VarChar(255)
+
+  field63 Int
+  field64 AI   @relation(fields: [field63], references: [id])
+  field65 Int
+  field66 User @relation("AFCreator", fields: [field65], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  field67 Int
+  field68 User @relation("AFUpdater", fields: [field67], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  field69 BH[]
+  field70 BV[]
+  field71 CD[]
+  field72 CK[]
+  field73 CV[]
+  field74 AG[]
+  field75 AC[]
+  field76 AD[]
+  field77 DI[] @relation("AFEmailPortalTarget")
+  field78 DU[]
+  field79 AE[]
+  field80 DV[] @relation("AFReminderEmailTarget")
+  field81 EG[]
+  field82 EN[]
+  field83 EU[]
+  field84 BL[]
+  field85 EY[] @relation("AFTriggeringNotification")
+  field86 FI[] @relation("AFReminderSmsTarget")
+
+  @@index([field28])
+  @@index([field12])
+  @@index([field13])
+  @@index([field63])
+  @@index([field65])
+  @@index([field67])
+}
+
+model AG {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(1000)
+
+  field2 Int
+  field3 AF   @relation(fields: [field2], references: [id], onDelete: Cascade)
+  field4 Int
+  field5 User @relation(fields: [field4], references: [id], onDelete: Cascade)
+
+  @@index([field2])
+  @@index([field4])
+  @@index([createdAt, field2])
+  @@index([createdAt, field4])
+}
+
+model AH {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(1000)
+
+  field2 Int
+  field3 AI   @relation(fields: [field2], references: [id], onDelete: Cascade)
+  field4 Int
+  field5 User @relation(fields: [field4], references: [id], onDelete: Cascade)
+
+  @@index([field2])
+  @@index([field4])
+}
+
+model AI {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1  Int @default(0)
+  field2  Int @default(0)
+  field3  Int @default(0)
+  field4  Int @default(0)
+  field5  Int @default(0)
+  field6  Int @default(0)
+  field7  Int @default(0)
+  field8  Int @default(0)
+  field9  Int @default(0)
+  field10 Int @default(0)
+
+  field11 Int
+  field12 User @relation("AICreator", fields: [field11], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  field13 AF[]
+  field14 AH[]
+  field15 DR[]
+
+  @@index([field11])
+}
+
+model AJ {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 ApproachTypeEnum
+
+  field2 AK  @relation(fields: [field3], references: [id], onDelete: Cascade)
+  field3 Int
+
+  @@index([field3])
+}
+
+model AK {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 String?                   @db.VarChar(255)
+  field2 String                    @db.VarChar(255)
+  field3 String                    @db.VarChar(255)
+  field4 String                    @db.VarChar(50)
+  field5 GenderEnum
+  field6 OrganismRelationRoleEnum?
+
+  field7 Int
+  field8 AM  @relation(fields: [field7], references: [id], onDelete: Cascade)
+
+  field9  DI[] @relation("AKEmailPortalTarget")
+  field10 DV[] @relation("AKReminderEmailTarget")
+  field11 AJ[]
+  field12 FI[] @relation("AKReminderSmsTarget")
+
+  @@index([field7])
+}
+
+model AL {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(1000)
+
+  field2 Int
+  field3 AM   @relation(fields: [field2], references: [id], onDelete: Cascade)
+  field4 Int
+  field5 User @relation("CreatedByAL", fields: [field4], references: [id], onDelete: Cascade)
+
+  @@index([field4])
+  @@index([field2])
+}
+
+enum YesOrNoEnum {
+  yes
+  no
+}
+
+model AM {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1  String       @db.VarChar(255)
+  field2  String       @unique @db.VarChar(50)
+  field3  String?      @db.VarChar(255)
+  field4  String       @db.VarChar(255)
+  field5  String?      @db.VarChar(255)
+  field6  String       @db.VarChar(255)
+  field7  String?      @db.VarChar(255)
+  field8  String       @db.VarChar(255)
+  field9  String       @db.VarChar(255)
+  field10 String       @db.VarChar(255)
+  field11 Boolean      @default(false)
+  field12 Boolean      @default(false)
+  field13 Boolean      @default(false)
+  field14 Boolean      @default(false)
+  field15 Boolean      @default(false)
+  field16 Boolean      @default(false)
+  field17 Boolean      @default(false)
+  field18 String?      @db.VarChar(255)
+  field19 String?      @db.VarChar(255)
+  field20 String?      @db.VarChar(255)
+  field21 String?      @db.VarChar(255)
+  field22 Int?
+  field23 YesOrNoEnum?
+  field24 Json?
+
+  field25 Int
+  field26 User @relation("CityHallCreator", fields: [field25], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  field27 Int
+  field28 User @relation("CityHallUpdater", fields: [field27], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  field29 AK[]
+  field30 AL[]
+  field31 BH[]
+  field32 AN[] @relation("AN")
+  field33 DI[] @relation("CityHallEmailPortalTarget")
+  field34 DV[] @relation("CityHallReminderEmailTarget")
+  field35 EG[]
+  field36 EN[]
+  field37 EU[]
+  field38 CV[]
+  field39 FI[] @relation("CityHallReminderSmsTarget")
+
+  @@index([field12])
+  @@index([field25])
+  @@index([field27])
+}
+
+model AN {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(1000)
+
+  field2 Int
+  field3 AM   @relation("AN", fields: [field2], references: [id], onDelete: Cascade)
+  field4 Int
+  field5 User @relation("CityHallCreatedByHistory", fields: [field4], references: [id], onDelete: Cascade)
+
+  @@index([field2])
+  @@index([field4])
+}
+
+enum AOTypeEnum {
+  logo
+  otherConnector
+}
+
+model AO {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 String?    @db.VarChar(255)
+  field2 AOTypeEnum
+
+  field3 AS  @relation(fields: [field4], references: [id], onDelete: Cascade)
+  field4 Int
+
+  @@index([field4])
+}
+
+model AP {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(1000)
+
+  field2 Int
+  field3 AS   @relation("AP", fields: [field2], references: [id], onDelete: Cascade)
+  field4 Int
+  field5 User @relation("ConnectorCreatedByHistory", fields: [field4], references: [id], onDelete: Cascade)
+
+  @@index([field2])
+  @@index([field4])
+}
+
+model AQ {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 String?                   @db.VarChar(255)
+  field2 String                    @db.VarChar(255)
+  field3 String                    @db.VarChar(255)
+  field4 String                    @db.VarChar(50)
+  field5 GenderEnum
+  field6 OrganismRelationRoleEnum?
+
+  field7 Int
+  field8 AS  @relation(fields: [field7], references: [id], onDelete: Cascade)
+
+  field9  DI[] @relation("AQEmailPortalTarget")
+  field10 DV[] @relation("AQReminderEmailTarget")
+  field11 FI[] @relation("AQReminderSmsTarget")
+
+  @@index([field7])
+}
+
+enum ConnectorTypeEnum {
+  STATE
+  PRIVATE
+}
+
+model AR {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(1000)
+
+  field2 Int
+  field3 AS   @relation(fields: [field2], references: [id], onDelete: Cascade)
+  field4 Int
+  field5 User @relation("CreatedByAR", fields: [field4], references: [id], onDelete: Cascade)
+
+  @@index([field4])
+  @@index([field2])
+}
+
+model AS {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1  String            @db.VarChar(255)
+  field2  String            @unique @db.VarChar(50)
+  field3  String            @db.VarChar(255)
+  field4  String            @db.VarChar(255)
+  field5  String?           @db.VarChar(255)
+  field6  String            @db.VarChar(255)
+  field7  String?           @db.VarChar(255)
+  field8  String            @db.VarChar(255)
+  field9  String            @db.VarChar(255)
+  field10 String            @db.VarChar(255)
+  field11 ConnectorTypeEnum
+  field12 Boolean           @default(false)
+  field13 Json?
+
+  field14 Int
+  field15 User @relation("ConnectorCreator", fields: [field14], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  field16 Int
+  field17 User @relation("ConnectorUpdater", fields: [field16], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  field18 BV[]
+  field19 CV[]
+  field20 AQ[]
+  field21 AR[]
+  field22 AO[]
+  field23 AP[] @relation("AP")
+  field24 DI[] @relation("ConnectorEmailPortalTarget")
+  field25 DV[] @relation("ConnectorReminderEmailTarget")
+  field26 FI[] @relation("ConnectorReminderSmsTarget")
+
+  @@index([field12])
+  @@index([field14])
+  @@index([field16])
+}
+
+model AT {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 String? @db.VarChar(255)
+  field2 String  @db.VarChar(255)
+  field3 String  @db.VarChar(255)
+  field4 String  @db.VarChar(50)
+
+  field5 GenderEnum
+  field6 OrganismRelationRoleEnum?
+
+  field7 Int
+  field8 AW  @relation(fields: [field7], references: [id], onDelete: Cascade)
+
+  field9  DI[] @relation("ATEmailPortalTarget")
+  field10 DV[] @relation("ATReminderEmailTarget")
+  field11 FI[] @relation("ATReminderSmsTarget")
+
+  @@index([field7])
+}
+
+model AU {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(1000)
+
+  field2 AW   @relation(fields: [field3], references: [id], onDelete: Cascade)
+  field3 Int
+  field4 User @relation("CreatedByAU", fields: [field5], references: [id], onDelete: Cascade)
+  field5 Int
+
+  @@index([field5])
+  @@index([field3])
+}
+
+model AV {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(1000)
+
+  field2 Int
+  field3 AW   @relation("AV", fields: [field2], references: [id], onDelete: Cascade)
+  field4 Int
+  field5 User @relation("TaxCenterCreatedByHistory", fields: [field4], references: [id], onDelete: Cascade)
+
+  @@index([field2])
+  @@index([field4])
+}
+
+model AW {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1  String            @db.VarChar(255)
+  field2  String            @unique @db.VarChar(50)
+  field3  String            @db.VarChar(255)
+  field4  String            @db.VarChar(255)
+  field5  String?           @db.VarChar(255)
+  field6  String            @db.VarChar(255)
+  field7  String?           @db.VarChar(255)
+  field8  String            @db.VarChar(255)
+  field9  String            @db.VarChar(255)
+  field10 String            @db.VarChar(255)
+  field11 CerfaCreationEnum
+  field12 Boolean           @default(false)
+  field13 Json?
+
+  field14 Int
+  field15 User @relation("TaxCenterCreator", fields: [field14], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  field16 Int
+  field17 User @relation("TaxCenterUpdater", fields: [field16], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  field18 CV[]
+  field19 AT[]
+  field20 AU[]
+  field21 AV[] @relation("AV")
+  field22 DI[] @relation("TaxCenterEmailPortalTarget")
+  field23 DV[] @relation("TaxCenterReminderEmailTarget")
+  field24 FI[] @relation("TaxCenterReminderSmsTarget")
+
+  @@index([field12])
+  @@index([field14])
+  @@index([field16])
+}
+
+enum ApproachAttributeEnum {
+  gardenShed
+  woodCarport
+  aluminiumCarport
+  integration
+  overTaxation
+  groundLaying
+  weightingTray
+}
+
+model AX {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(1000)
+  field2 Int
+
+  field3 Int
+  field4 User @relation("BillingExportCreatedByHistory", fields: [field3], references: [id], onDelete: Cascade)
+
+  @@index([field3])
+}
+
+model AY {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(1000)
+  field2 Int
+
+  field3 Int
+  field4 User @relation("BillingImportCreatedByHistory", fields: [field3], references: [id], onDelete: Cascade)
+
+  @@index([field3])
+}
+
+enum AZStatusEnum {
+  SENT_FOR_INVOICING
+  SENT_FOR_CREDIT
+  INVOICED
+  TO_NOT_INVOICE
+}
+
+model AZ {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 String       @db.VarChar(255)
+  field2 AZStatusEnum
+}
+
+enum ApproachBillingStatusEnum {
+  AWAITING_INVOICING
+  SENT_FOR_INVOICING
+  SENT_FOR_CREDIT
+  INVOICED
+  TO_NOT_INVOICE
+}
+
+enum ApproachBillingEmissionTypeEnum {
+  automatic
+  manual
+}
+
+model BA {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 String?                          @db.VarChar(255)
+  field2 DateTime?
+  field3 DateTime?
+  field4 DateTime?
+  field5 String?                          @db.VarChar(255)
+  field6 ApproachBillingEmissionTypeEnum?
+  field7 String?                          @db.VarChar(255)
+  field8 Float
+  field9 ApproachBillingStatusEnum        @default(AWAITING_INVOICING)
+
+  field10 BH?  @relation(fields: [field11], references: [id], onDelete: Cascade)
+  field11 Int? @unique
+  field12 BV?  @relation(fields: [field13], references: [id], onDelete: Cascade)
+  field13 Int? @unique
+  field14 CD?  @relation(fields: [field15], references: [id], onDelete: Cascade)
+  field15 Int? @unique
+  field16 CK?  @relation(fields: [field17], references: [id], onDelete: Cascade)
+  field17 Int? @unique
+  field18 CV?  @relation(fields: [field19], references: [id], onDelete: Cascade)
+  field19 Int? @unique
+  field20 EG?  @relation(fields: [field21], references: [id], onDelete: Cascade)
+  field21 Int? @unique
+  field22 EN?  @relation(fields: [field23], references: [id], onDelete: Cascade)
+  field23 Int? @unique
+  field24 EU?  @relation(fields: [field25], references: [id], onDelete: Cascade)
+  field25 Int? @unique
+  field26 BL?  @relation("HRenovApproachBilling", fields: [field27], references: [id], onDelete: Cascade)
+  field27 Int? @unique
+  field28 BL?  @relation("HRenovApproachSecondBilling", fields: [field29], references: [id], onDelete: Cascade)
+  field29 Int? @unique
+
+  field30 DR?
+}
+
+enum CommentTypeEnum {
+  classic
+  fitter
+}
+
+enum BHStatusEnum {
+  PENDING_DECISION
+  PENDING_RECEIPT
+  PENDING_APPROVAL
+  TACIT_APPROVAL
+  APPROVAL
+  REFUSAL
+}
+
+enum HRenovApproachStatusEnum {
+  PENDING_DECISION
+  IN_PROGRESS
+  APPROVAL
+  REFUSAL
+  PAYMENT_REQUEST_SUBMITTED
+  FINISHED
+  PAID
+}
+
+enum HRenovAgentTypeEnum {
+  administrativeAgent
+  financialAgent
+  mixedAgent
+}
+
+enum HRenovApproachDocumentTypeEnum {
+  ownershipProof
+  familyRecordBook
+  jointOwnershipAttestation
+  mprReceipt
+  ceeReceipt
+  refusalLetter
+  withdrawalLetter
+  rib
+  bankAttestation
+  mprMandate
+  informationSheet
+  landlordCertificate
+  bdcQuote
+  grantLetter
+  invoice
+  paymentLetter
+  correctiveNotice
+  rentalContract
+}
+
+enum HRenovETypeEnum {
+  PAC
+  BTD
+  CHS
+  AUDIT
+  PELLET_STOVE
+  BIOMASS_BOILER
+  VMC
+  ITE
+  GLOBAL_RENOVATION
+}
+
+enum HRenovOwnerTypeEnum {
+  LESSOR
+  OCCUPANT
+}
+
+enum CityHallAbfOriginEnum {
+  email
+  phone
+  atlas
+  demat
+}
+
+enum BFTypeEnum {
+  cityHallLetter
+  photoEditing
+  depositReceipt
+  deadlineExtension
+  mandate
+  refusal
+  agreement
+  complement1
+  complement2
+  complement3
+  complement4
+  complement5
+  cerfa
+  annexes
+  daact
+  miscellaneous1
+  miscellaneous2
+  miscellaneous3
+  miscellaneous4
+  miscellaneous5
+  otherBH
+}
+
+enum BHSendTypeEnum {
+  email
+  letter
+  demat
+}
+
+enum BHPanelsColorEnum {
+  red
+  black
+}
+
+enum BHPanelsOrientationEnum {
+  all
+  south
+  east
+  west
+  north
+  southEast
+  southWest
+  northEast
+  northWest
+}
+
+model BB {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(255)
+
+  field2 Int @unique
+  field3 BH  @relation(fields: [field2], references: [id], onDelete: Cascade)
+}
+
+model BC {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String? @db.VarChar(255)
+
+  field2 BD  @relation("BC", fields: [field3], references: [id], onDelete: Cascade)
+  field3 Int
+
+  @@index([field3])
+}
+
+model BD {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String          @db.VarChar(1000)
+  field2 CommentTypeEnum @default(classic)
+
+  field3 BH    @relation(fields: [field4], references: [id], onDelete: Cascade)
+  field4 Int
+  field5 User? @relation("CreatedByBD", fields: [field6], references: [id], onDelete: Cascade)
+  field6 Int?
+  field7 R?    @relation("CreatedByRBD", fields: [field8], references: [id], onDelete: Cascade)
+  field8 Int?
+
+  field9 BC[] @relation("BC")
+
+  @@index([field6])
+  @@index([field4])
+  @@index([field8])
+}
+
+model BE {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(1000)
+
+  field2 Int
+  field3 BH    @relation("BE", fields: [field2], references: [id], onDelete: Cascade)
+  field4 Int?
+  field5 User? @relation("BHCreatedByHistory", fields: [field4], references: [id], onDelete: Cascade)
+
+  @@index([field2])
+  @@index([field4])
+  @@index([createdAt, field2])
+  @@index([createdAt, field4])
+}
+
+model BF {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 String?    @db.VarChar(255)
+  field2 BFTypeEnum
+
+  field3 BH  @relation(fields: [field4], references: [id], onDelete: Cascade)
+  field4 Int
+
+  @@index([field4])
+}
+
+model BG {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 String?                        @db.VarChar(255)
+  field2 HRenovApproachDocumentTypeEnum
+
+  field3 BL  @relation(fields: [field4], references: [id], onDelete: Cascade)
+  field4 Int
+
+  @@index([field4])
+}
+
+model BH {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1  String                 @unique @db.VarChar(255)
+  field2  BHStatusEnum           @default(PENDING_DECISION)
+  field3  ApproachStateEnum      @default(NORMAL)
+  field4  Int                    @default(0)
+  field5  DateTime?
+  field6  BHSendTypeEnum?
+  field7  String?                @db.VarChar(255)
+  field8  String?                @db.VarChar(255)
+  field9  DateTime?
+  field10 DateTime?
+  field11 DateTime?
+  field12 DateTime?
+  field13 DateTime?
+  field14 YesOrNoEnum?
+  field15 CityHallAbfOriginEnum?
+  field16 String?                @db.VarChar(255)
+  field17 DateTime
+  field18 Float?
+  field19 BHPanelsColorEnum?
+  field20 String?                @db.VarChar(255)
+
+  field21 Int
+  field22 AM    @relation(fields: [field23], references: [id])
+  field23 Int
+  field24 R     @relation(fields: [field25], references: [id])
+  field25 Int
+  field26 AF    @relation(fields: [field27], references: [id], onDelete: Cascade)
+  field27 Int
+  field28 User  @relation("BHCreator", fields: [field29], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  field29 Int
+  field30 User? @relation("BHUpdater", fields: [field31], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  field31 Int?
+  field32 User? @relation("BHAttributedUser", fields: [field33], references: [id])
+  field33 Int?  @unique
+  field34 DR?   @relation(fields: [field35], references: [id])
+  field35 Int   @unique
+  field36 E?    @relation(fields: [field37], references: [id], onDelete: NoAction)
+  field37 Int?
+  field38 FH?
+  field39 BB?
+  field40 BA?
+  field41 FC?   @relation("BHFromRequest")
+
+  field42 BF[]
+  field43 DL[] @relation("BH")
+  field44 BD[]
+  field45 BE[] @relation("BE")
+  field46 DQ[]
+  field47 EW[]
+  field48 FK[]
+  field49 BI?
+
+  @@index([field25])
+  @@index([field11])
+  @@index([field14])
+  @@index([field12])
+  @@index([field13])
+  @@index([field27])
+  @@index([field29])
+  @@index([field31])
+  @@index([field33])
+  @@index([field35])
+  @@index([field37])
+  @@index([field23])
+}
+
+model BI {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(255)
+
+  field2 Int
+  field3 R   @relation(fields: [field2], references: [id], onDelete: Cascade)
+  field4 Int @unique
+  field5 BH  @relation(fields: [field4], references: [id], onDelete: Cascade)
+
+  @@index([field2])
+  @@index([field4])
+}
+
+model BJ {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(255)
+
+  field2 Int @unique
+  field3 BL  @relation(fields: [field2], references: [id], onDelete: Cascade)
+}
+
+model BK {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 HRenovETypeEnum
+
+  field2 Int
+  field3 BL  @relation("BLProductTypes", fields: [field2], references: [id], onDelete: Cascade)
+
+  @@index([field2])
+}
+
+model BL {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1  String                   @unique @db.VarChar(255)
+  field2  HRenovApproachStatusEnum @default(PENDING_DECISION)
+  field3  ApproachStateEnum        @default(NORMAL)
+  field4  Int                      @default(0)
+  field5  HRenovOwnerTypeEnum?
+  field6  DateTime
+  field7  String?                  @db.VarChar(255)
+  field8  String?
+  field9  String?
+  field10 DateTime?
+  field11 DateTime?
+  field12 HRenovAgentTypeEnum?
+  field13 YesOrNoEnum?
+  field14 YesOrNoEnum?
+  field15 Float?
+  field16 Float?
+  field17 String?
+  field18 Float?
+  field19 DateTime?
+  field20 String?
+  field21 DateTime?
+  field22 DateTime?
+  field23 DateTime?
+  field24 Float?
+  field25 Float?
+  field26 String?
+  field27 DateTime?
+  field28 DateTime?
+  field29 DateTime?
+  field30 String?                  @db.VarChar(255)
+
+  field31 Int
+  field32 R?    @relation(fields: [field31], references: [id])
+  field33 Int
+  field34 AF?   @relation(fields: [field33], references: [id], onDelete: Cascade)
+  field35 Int
+  field36 User? @relation("HRenovApproachCreator", fields: [field35], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  field37 Int
+  field38 User? @relation("HRenovApproachUpdater", fields: [field37], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  field39 Int?
+  field40 User? @relation("HRenovApproachAttributedUser", fields: [field39], references: [id])
+  field41 Int?
+  field42 E?    @relation(fields: [field41], references: [id])
+  field43 BA?   @relation("HRenovApproachBilling")
+  field44 BA?   @relation("HRenovApproachSecondBilling")
+  field45 BJ?
+
+  field46 BG[]
+  field47 DL[] @relation("BL")
+  field48 DQ[]
+  field49 EW[]
+  field50 C[]  @relation("BLProductTypes")
+  field51 BP[]
+  field52 BN[] @relation("BN")
+  field53 BM?
+  field54 BK[] @relation("BLProductTypes")
+
+  @@index([field11])
+  @@index([field14])
+  @@index([field12])
+  @@index([field13])
+  @@index([field39])
+  @@index([field41])
+  @@index([field31])
+  @@index([field33])
+  @@index([field35])
+  @@index([field37])
+}
+
+model BM {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(255)
+
+  field2 Int
+  field3 R   @relation(fields: [field2], references: [id], onDelete: Cascade)
+  field4 Int @unique
+  field5 BL  @relation(fields: [field4], references: [id], onDelete: Cascade)
+
+  @@index([field2])
+  @@index([field4])
+}
+
+model BN {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(1000)
+
+  field2 Int
+  field3 BL    @relation("BN", fields: [field2], references: [id], onDelete: Cascade)
+  field4 Int?
+  field5 User? @relation("HRenovApproachCreatedByHistory", fields: [field4], references: [id], onDelete: Cascade)
+
+  @@index([field2])
+  @@index([field4])
+}
+
+model BO {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String? @db.VarChar(255)
+
+  field2 BP  @relation("BO", fields: [field3], references: [id], onDelete: Cascade)
+  field3 Int
+
+  @@index([field3])
+}
+
+model BP {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String          @db.VarChar(1000)
+  field2 CommentTypeEnum @default(classic)
+
+  field3 BL    @relation(fields: [field4], references: [id], onDelete: Cascade)
+  field4 Int
+  field5 User? @relation("CreatedByHRenovApproachComment", fields: [field6], references: [id], onDelete: Cascade)
+  field6 Int?
+  field7 R?    @relation("CreatedByRHRenovApproachComment", fields: [field8], references: [id], onDelete: Cascade)
+  field8 Int?
+
+  field9 BO[] @relation("BO")
+
+  @@index([field6])
+  @@index([field4])
+  @@index([field8])
+}
+
+enum ConnectorApproachStatusEnum {
+  PENDING_DECISION
+  FOLDER_READY
+  PENDING_RECEIPT
+  PENDING_APPOINTMENT
+  ERDF_FINALIZED
+}
+
+enum ConnectorApproachDocumentTypeEnum {
+  completenessAccused
+  pdrNetworkQuote
+  representationMandate
+  miscellaneous1
+  miscellaneous2
+  miscellaneous3
+  miscellaneous4
+  miscellaneous5
+  otherConnectorApproach
+  groundPlan
+  depositReceiptConnectorApproach
+  planningPermission
+  locationPlan
+  meterPhotos
+  circuitBreakerPhoto
+  cadastralPlan
+  fitterReceipt
+  fitterCityHallApproval
+  nonTargetedAttestationR
+  targetedAttestationR
+}
+
+enum EnedisPublicationStatusEnum {
+  AWAITING_PUBLICATION
+  BACK_IN_AWAITING
+  SENT
+}
+
+model BQ {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(255)
+
+  field2 Int @unique
+  field3 BV  @relation(fields: [field2], references: [id], onDelete: Cascade)
+}
+
+model BR {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String? @db.VarChar(255)
+
+  field2 BS  @relation("BR", fields: [field3], references: [id], onDelete: Cascade)
+  field3 Int
+
+  @@index([field3])
+}
+
+model BS {
+  id        Int             @id @default(autoincrement())
+  createdAt DateTime        @default(now())
+  field1    String          @db.VarChar(1000)
+  field2    CommentTypeEnum @default(classic)
+
+  field3 BV    @relation(fields: [field4], references: [id], onDelete: Cascade)
+  field4 Int
+  field5 User? @relation("CreatedByConnectorApproachComment", fields: [field6], references: [id], onDelete: Cascade)
+  field6 Int?
+  field7 R?    @relation("CreatedByRConnectorApproachComment", fields: [field8], references: [id], onDelete: Cascade)
+  field8 Int?
+
+  field9 BR[] @relation("BR")
+
+  @@index([field6])
+  @@index([field4])
+  @@index([field8])
+}
+
+model BT {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(1000)
+
+  field2 Int
+  field3 BV    @relation("BT", fields: [field2], references: [id], onDelete: Cascade)
+  field4 Int?
+  field5 User? @relation("ConnectorApproachCreatedByHistory", fields: [field4], references: [id], onDelete: Cascade)
+
+  @@index([field2])
+  @@index([field4])
+  @@index([createdAt, field2])
+  @@index([createdAt, field4])
+}
+
+model BU {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 String?                           @db.VarChar(255)
+  field2 ConnectorApproachDocumentTypeEnum
+
+  field3 BV  @relation(fields: [field4], references: [id], onDelete: Cascade)
+  field4 Int
+
+  @@index([field4])
+}
+
+model BV {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1  String                      @unique @db.VarChar(255)
+  field2  ConnectorApproachStatusEnum @default(PENDING_DECISION)
+  field3  ApproachStateEnum           @default(NORMAL)
+  field4  Int                         @default(0)
+  field5  String?                     @db.VarChar(255)
+  field6  DateTime?
+  field7  DateTime?
+  field8  DateTime?
+  field9  YesOrNoEnum?
+  field10 DateTime?
+  field11 DateTime?
+  field12 DateTime?
+  field13 DateTime?
+  field14 DateTime?
+  field15 Float?
+  field16 YesOrNoEnum?
+  field17 DateTime?
+  field18 DateTime?
+  field19 DateTime?
+  field20 String?                     @db.VarChar(255)
+  field21 DateTime
+  field22 Int                         @default(0)
+  field23 BatteryTypeEnum             @default(NO)
+  field24 Int?
+  field25 Int?
+  field26 String?                     @db.VarChar(255)
+  field27 EContractTypeEnum?
+  field28 String?                     @db.VarChar(255)
+  field29 EnedisPublicationStatusEnum @default(AWAITING_PUBLICATION)
+  field30 String?                     @db.VarChar(255)
+
+  field31 Int?
+  field32 E?    @relation("AttachedBatteryConnector", fields: [field31], references: [id], onDelete: NoAction)
+  field33 Int?
+  field34 E?    @relation("AttachedInverterConnector", fields: [field33], references: [id], onDelete: NoAction)
+  field35 Int?
+  field36 E?    @relation("AttachedInverter2Connector", fields: [field35], references: [id], onDelete: NoAction)
+  field37 Int
+  field38 AS    @relation(fields: [field39], references: [id])
+  field39 Int
+  field40 R     @relation(fields: [field41], references: [id])
+  field41 Int
+  field42 AF    @relation(fields: [field43], references: [id], onDelete: Cascade)
+  field43 Int
+  field44 User  @relation("ConnectorApproachCreator", fields: [field45], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  field45 Int
+  field46 User? @relation("ConnectorApproachUpdater", fields: [field47], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  field47 Int?
+  field48 User? @relation("ConnectorApproachAttributedUser", fields: [field49], references: [id])
+  field49 Int?  @unique
+  field50 Int?  @unique
+  field51 FH?
+  field52 DR?   @relation(fields: [field50], references: [id])
+  field53 BQ?
+  field54 BA?
+  field55 FC?   @relation("ConnectorApproachFromRequest")
+
+  field56 BU[]
+  field57 DL[] @relation("BV")
+  field58 BS[]
+  field59 BT[] @relation("BT")
+  field60 DQ[]
+  field61 EW[]
+  field62 FK[]
+  field63 BW?
+
+  @@index([field26])
+  @@index([field11])
+  @@index([field14])
+  @@index([field12])
+  @@index([field13])
+  @@index([field39])
+  @@index([field37])
+  @@index([field41])
+  @@index([field43])
+  @@index([field45])
+  @@index([field47])
+  @@index([field49])
+  @@index([field50])
+  @@index([field31])
+  @@index([field33])
+  @@index([field35])
+}
+
+model BW {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(255)
+
+  field2 Int
+  field3 R   @relation(fields: [field2], references: [id], onDelete: Cascade)
+  field4 Int @unique
+  field5 BV  @relation(fields: [field4], references: [id], onDelete: Cascade)
+
+  @@index([field2])
+  @@index([field4])
+}
+
+enum ConsultantApproachStatusEnum {
+  PENDING_DECISION
+  FILE_SENT
+  FILE_PENDING
+  PLANNED_VISIT
+  SCHEDULED_VISIT
+  AWAITING_MEC
+  TARGETED
+  ARCHIVE
+}
+
+enum ConsultantApproachDocumentTypeEnum {
+  visitReport
+  availabilityRequest
+  additionalAvailability
+  archivingRelaunchNoFollowUp
+  technicalFileCorrection
+  certificateCorrection
+  technicalFile
+  miscellaneous1
+  miscellaneous2
+  miscellaneous3
+  miscellaneous4
+  miscellaneous5
+  otherConsultantApproach
+  nonTargetedAttestationConsultant
+  targetedAttestationConsultant
+}
+
+model BX {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(255)
+
+  field2 Int @unique
+  field3 CD  @relation(fields: [field2], references: [id], onDelete: Cascade)
+}
+
+model BY {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String? @db.VarChar(255)
+
+  field2 BZ  @relation("BY", fields: [field3], references: [id], onDelete: Cascade)
+  field3 Int
+
+  @@index([field3])
+}
+
+model BZ {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String          @db.VarChar(1000)
+  field2 CommentTypeEnum @default(classic)
+
+  field3 CD    @relation(fields: [field4], references: [id], onDelete: Cascade)
+  field4 Int
+  field5 User? @relation("CreatedByConsultantApproachComment", fields: [field6], references: [id], onDelete: Cascade)
+  field6 Int?
+  field7 R?    @relation("CreatedByRConsultantApproachComment", fields: [field8], references: [id], onDelete: Cascade)
+  field8 Int?
+
+  field9 BY[] @relation("BY")
+
+  @@index([field6])
+  @@index([field4])
+  @@index([field8])
+}
+
+model CA {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(1000)
+
+  field2 Int
+  field3 CD    @relation("CA", fields: [field2], references: [id], onDelete: Cascade)
+  field4 Int?
+  field5 User? @relation("ConsultantApproachCreatedByHistory", fields: [field4], references: [id], onDelete: Cascade)
+
+  @@index([field2])
+  @@index([field4])
+  @@index([createdAt, field2])
+  @@index([createdAt, field4])
+}
+
+model CB {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 String?                            @db.VarChar(255)
+  field2 ConsultantApproachDocumentTypeEnum
+
+  field3 CD  @relation(fields: [field4], references: [id], onDelete: Cascade)
+  field4 Int
+
+  @@index([field4])
+}
+
+model CC {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 String @db.VarChar(1000)
+
+  field2 CD   @relation(fields: [field3], references: [id], onDelete: Cascade)
+  field3 Int
+  field4 User @relation("CreatedByConsultantApproachObservationComment", fields: [field5], references: [id], onDelete: Cascade)
+  field5 Int
+
+  @@index([field3])
+  @@index([field5])
+}
+
+model CD {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1  String                       @unique @db.VarChar(255)
+  field2  ConsultantApproachStatusEnum @default(PENDING_DECISION)
+  field3  ApproachStateEnum            @default(NORMAL)
+  field4  Int                          @default(0)
+  field5  String?                      @db.VarChar(255)
+  field6  String?                      @db.VarChar(255)
+  field7  DateTime?
+  field8  Int?
+  field9  DateTime?
+  field10 DateTime?
+  field11 String?                      @db.VarChar(255)
+  field12 String?                      @db.VarChar(255)
+  field13 DateTime?
+  field14 String?                      @db.VarChar(255)
+  field15 String?                      @db.VarChar(255)
+  field16 String?                      @db.VarChar(255)
+  field17 String?                      @db.VarChar(255)
+  field18 DateTime
+  field19 YesOrNoEnum?
+  field20 Int                          @default(0)
+  field21 BatteryTypeEnum              @default(NO)
+  field22 Int?
+  field23 Int?
+  field24 String?                      @db.VarChar(255)
+  field25 EContractTypeEnum?
+  field26 String?                      @db.VarChar(255)
+
+  field27 Int?
+  field28 E?    @relation("AttachedBatteryConsultant", fields: [field27], references: [id], onDelete: NoAction)
+  field29 Int?
+  field30 E?    @relation("AttachedInverterConsultant", fields: [field29], references: [id], onDelete: NoAction)
+  field31 Int?
+  field32 E?    @relation("AttachedInverter2Consultant", fields: [field31], references: [id], onDelete: NoAction)
+  field33 Int
+  field34 R     @relation(fields: [field35], references: [id])
+  field35 Int
+  field36 AF    @relation(fields: [field37], references: [id], onDelete: Cascade)
+  field37 Int
+  field38 User  @relation("ConsultantApproachCreator", fields: [field39], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  field39 Int
+  field40 User? @relation("ConsultantApproachUpdater", fields: [field41], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  field41 Int?
+  field42 User? @relation("ConsultantApproachAttributedUser", fields: [field43], references: [id])
+  field43 Int?  @unique
+  field44 Int?  @unique
+  field45 FH?
+  field46 DR?   @relation(fields: [field44], references: [id])
+  field47 BX?
+  field48 BA?
+  field49 FC?   @relation("ConsultantApproachFromRequest")
+
+  field50 CC[]
+  field51 CB[]
+  field52 DL[] @relation("CD")
+  field53 BZ[]
+  field54 CA[] @relation("CA")
+  field55 DQ[]
+  field56 EW[]
+  field57 FK[]
+  field58 CE?
+
+  @@index([field11])
+  @@index([field14])
+  @@index([field12])
+  @@index([field13])
+  @@index([field39])
+  @@index([field37])
+  @@index([field27])
+  @@index([field29])
+  @@index([field31])
+  @@index([field35])
+  @@index([field41])
+  @@index([field43])
+  @@index([field44])
+}
+
+model CE {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(255)
+
+  field2 Int
+  field3 R   @relation(fields: [field2], references: [id], onDelete: Cascade)
+  field4 Int @unique
+  field5 CD  @relation(fields: [field4], references: [id], onDelete: Cascade)
+
+  @@index([field2])
+  @@index([field4])
+}
+
+enum CalpinageApproachDocumentTypeEnum {
+  calpinagePhotoEditing
+  otherCalpinageApproach
+}
+
+enum CalpinageApproachStatusEnum {
+  NEW
+  FINISHED
+}
+
+model CF {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 String?                           @db.VarChar(255)
+  field2 CalpinageApproachDocumentTypeEnum
+
+  field3 CK  @relation(fields: [field4], references: [id], onDelete: Cascade)
+  field4 Int
+
+  @@index([field4])
+}
+
+model CG {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(255)
+
+  field2 Int @unique
+  field3 CK  @relation(fields: [field2], references: [id], onDelete: Cascade)
+}
+
+model CH {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String? @db.VarChar(255)
+
+  field2 CI  @relation("CH", fields: [field3], references: [id], onDelete: Cascade)
+  field3 Int
+
+  @@index([field3])
+}
+
+model CI {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String          @db.VarChar(1000)
+  field2 CommentTypeEnum @default(classic)
+
+  field3 CK    @relation(fields: [field4], references: [id], onDelete: Cascade)
+  field4 Int
+  field5 User? @relation("CreatedByCalpinageApproachComment", fields: [field6], references: [id], onDelete: Cascade)
+  field6 Int?
+  field7 R?    @relation("CreatedByRCalpinageApproachComment", fields: [field8], references: [id], onDelete: Cascade)
+  field8 Int?
+
+  field9 CH[] @relation("CH")
+
+  @@index([field6])
+  @@index([field4])
+  @@index([field8])
+}
+
+model CJ {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(1000)
+
+  field2 Int
+  field3 CK    @relation("CJ", fields: [field2], references: [id], onDelete: Cascade)
+  field4 Int?
+  field5 User? @relation("CalpinageApproachCreatedByHistory", fields: [field4], references: [id], onDelete: Cascade)
+
+  @@index([field2])
+  @@index([field4])
+  @@index([createdAt, field2])
+  @@index([createdAt, field4])
+}
+
+model CK {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 String                      @unique @db.VarChar(255)
+  field2 CalpinageApproachStatusEnum @default(NEW)
+  field3 ApproachStateEnum           @default(NORMAL)
+  field4 Boolean                     @default(false)
+  field5 String?                     @db.VarChar(255)
+  field6 String?                     @db.VarChar(255)
+
+  field7  Int
+  field8  R     @relation(fields: [field9], references: [id])
+  field9  Int
+  field10 AF    @relation(fields: [field11], references: [id], onDelete: Cascade)
+  field11 Int
+  field12 User  @relation("CalpinageApproachCreator", fields: [field13], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  field13 Int
+  field14 User? @relation("CalpinageApproachUpdater", fields: [field15], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  field15 Int?
+  field16 User? @relation("CalpinageApproachAttributedUser", fields: [field17], references: [id])
+  field17 Int?
+  field18 FH?
+  field19 CG?
+  field20 BA?
+
+  field21 CF[]
+  field22 CI[]
+  field23 CJ[] @relation("CJ")
+  field24 DQ[]
+  field25 EW[]
+  field26 FK[]
+  field27 CL?
+
+  @@index([field11])
+  @@index([field13])
+  @@index([field9])
+  @@index([field15])
+  @@index([field17])
+}
+
+model CL {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(255)
+
+  field2 Int
+  field3 R   @relation(fields: [field2], references: [id], onDelete: Cascade)
+  field4 Int @unique
+  field5 CK  @relation(fields: [field4], references: [id], onDelete: Cascade)
+
+  @@index([field2])
+  @@index([field4])
+}
+
+enum TvaApproachGeneralStatusEnum {
+  PENDING_DECISION
+  IN_PROGRESS
+  FINISHED
+}
+
+enum TvaApproachTaxesStatusEnum {
+  FILE_CREATED
+  INSEE_VALIDATED
+  P0_TODO
+  P0_SENT
+  AWAITING_CODE
+  DECLARATION_IN_PROGRESS
+  DECLARATION_DONE
+}
+
+enum TvaApproachEDFStatusEnum {
+  PENDING_DECISION
+  CONTRAT_REQUEST_TODO
+  CONTRACT_ASKED
+  CAO_SIGNED
+  ERDF_FINALIZED
+}
+
+enum TvaApproachDocumentTypeEnum {
+  edfAmendment
+  p0
+  p2
+  p4
+  kit
+  signedEditedEDFContract
+  fiscalMemento
+  returnLetter
+  inseeFile
+  fiscalSurvey
+  liabilityDeclaration
+  mandateTvaApproach
+}
+
+model CM {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 String?                     @db.VarChar(255)
+  field2 TvaApproachDocumentTypeEnum
+
+  field3 CV  @relation(fields: [field4], references: [id], onDelete: Cascade)
+  field4 Int
+
+  @@index([field4])
+}
+
+model CN {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String? @db.VarChar(255)
+
+  field2 CO  @relation("CN", fields: [field3], references: [id], onDelete: Cascade)
+  field3 Int
+
+  @@index([field3])
+}
+
+model CO {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String          @db.VarChar(1000)
+  field2 CommentTypeEnum @default(classic)
+
+  field3 CV    @relation(fields: [field4], references: [id], onDelete: Cascade)
+  field4 Int
+  field5 User? @relation("CreatedByTvaApproachGeneralComment", fields: [field6], references: [id], onDelete: Cascade)
+  field6 Int?
+  field7 R?    @relation("CreatedByRTvaApproachGeneralComment", fields: [field8], references: [id], onDelete: Cascade)
+  field8 Int?
+
+  field9 CN[] @relation("CN")
+
+  @@index([field6])
+  @@index([field4])
+  @@index([field8])
+}
+
+model CP {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String? @db.VarChar(255)
+
+  field2 CQ  @relation("CP", fields: [field3], references: [id], onDelete: Cascade)
+  field3 Int
+
+  @@index([field3])
+}
+
+model CQ {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String          @db.VarChar(1000)
+  field2 CommentTypeEnum @default(classic)
+
+  field3 CV    @relation(fields: [field4], references: [id], onDelete: Cascade)
+  field4 Int
+  field5 User? @relation("CreatedByTvaApproachTaxesComment", fields: [field6], references: [id], onDelete: Cascade)
+  field6 Int?
+  field7 R?    @relation("CreatedByRTvaApproachTaxesComment", fields: [field8], references: [id], onDelete: Cascade)
+  field8 Int?
+
+  field9 CP[] @relation("CP")
+
+  @@index([field6])
+  @@index([field4])
+  @@index([field8])
+}
+
+model CR {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String? @db.VarChar(255)
+
+  field2 CS  @relation("CR", fields: [field3], references: [id], onDelete: Cascade)
+  field3 Int
+
+  @@index([field3])
+}
+
+model CS {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String          @db.VarChar(1000)
+  field2 CommentTypeEnum @default(classic)
+
+  field3 CV    @relation(fields: [field4], references: [id], onDelete: Cascade)
+  field4 Int
+  field5 User? @relation("CreatedByTvaApproachEDFComment", fields: [field6], references: [id], onDelete: Cascade)
+  field6 Int?
+  field7 R?    @relation("CreatedByRTvaApproachEDFComment", fields: [field8], references: [id], onDelete: Cascade)
+  field8 Int?
+
+  field9 CR[] @relation("CR")
+
+  @@index([field6])
+  @@index([field4])
+  @@index([field8])
+}
+
+model CT {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(1000)
+
+  field2 Int
+  field3 CV    @relation("CT", fields: [field2], references: [id], onDelete: Cascade)
+  field4 Int?
+  field5 User? @relation("TvaApproachCreatedByHistory", fields: [field4], references: [id], onDelete: Cascade)
+
+  @@index([field2])
+  @@index([field4])
+  @@index([createdAt, field2])
+  @@index([createdAt, field4])
+}
+
+model CU {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(255)
+
+  field2 Int @unique
+  field3 CV  @relation(fields: [field2], references: [id], onDelete: Cascade)
+}
+
+enum TvaContractorEnum {
+  FITTER
+  RESIDENT
+}
+
+enum StatementParticularityEnum {
+  statementDelayed
+  ddr3517S
+}
+
+model CV {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1  String                       @unique @db.VarChar(255)
+  field2  ApproachStateEnum            @default(NORMAL)
+  field3  TvaApproachGeneralStatusEnum @default(PENDING_DECISION)
+  field4  TvaApproachTaxesStatusEnum   @default(FILE_CREATED)
+  field5  TvaApproachEDFStatusEnum     @default(PENDING_DECISION)
+  field6  Int                          @default(0)
+  field7  DateTime
+  field8  TvaContractorEnum            @default(FITTER)
+  field9  TvaContractorEnum            @default(FITTER)
+  field10 String?                      @db.VarChar(255)
+  field11 String?                      @db.VarChar(255)
+  field12 String?                      @db.VarChar(255)
+  field13 String?                      @db.VarChar(255)
+  field14 String?                      @db.VarChar(255)
+  field15 DateTime?
+  field16 DateTime?
+  field17 DateTime?
+  field18 DateTime?
+  field19 DateTime?
+  field20 DateTime?
+  field21 DateTime?
+  field22 DateTime?
+  field23 DateTime?
+  field24 Boolean?
+  field25 Boolean?
+  field26 Boolean?
+  field27 Boolean?
+  field28 Boolean?
+  field29 DateTime?
+  field30 DateTime?
+  field31 DateTime?
+  field32 Boolean?
+  field33 Float?
+  field34 Int?
+  field35 Int?
+  field36 Int?
+  field37 DateTime?
+  field38 String?                      @db.VarChar(255)
+  field39 DateTime?
+  field40 DateTime?
+  field41 StatementParticularityEnum?
+  field42 DateTime?
+  field43 DateTime?
+  field44 DateTime?
+  field45 DateTime?
+  field46 DateTime?
+  field47 DateTime?
+
+  field48 Int?
+  field49 R?    @relation(fields: [field48], references: [id])
+  field50 AM?   @relation(fields: [field51], references: [id])
+  field51 Int?
+  field52 AS?   @relation(fields: [field53], references: [id])
+  field53 Int?
+  field54 AW?   @relation(fields: [field55], references: [id])
+  field55 Int?
+  field56 AF?   @relation(fields: [field57], references: [id], onDelete: Cascade)
+  field57 Int?
+  field58 User? @relation("TvaApproachCreator", fields: [field59], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  field59 Int?
+  field60 User? @relation("TvaApproachUpdater", fields: [field61], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  field61 Int?
+  field62 User? @relation("TvaApproachAttributedUser", fields: [field63], references: [id])
+  field63 Int?
+  field64 Int?
+  field65 FH?
+  field66 CU?
+  field67 BA?
+  field68 FC?   @relation("TvaApproachFromRequest")
+
+  field69 CM[]
+  field70 CO[]
+  field71 CQ[]
+  field72 CS[]
+  field73 CT[] @relation("CT")
+  field74 DQ[]
+  field75 DL[] @relation("TvaApproachGeneral")
+  field76 DL[] @relation("TvaApproachTaxes")
+  field77 DL[] @relation("TvaApproachEdf")
+  field78 EW[]
+  field79 FK[]
+  field80 CW?
+
+  @@index([field11])
+  @@index([field25])
+  @@index([field26])
+  @@index([field27])
+  @@index([field14])
+  @@index([field12])
+  @@index([field13])
+  @@index([field39])
+  @@index([field48])
+  @@index([field51])
+  @@index([field53])
+  @@index([field55])
+  @@index([field57])
+  @@index([field59])
+  @@index([field61])
+  @@index([field63])
+}
+
+model CW {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(255)
+
+  field2 Int
+  field3 R   @relation(fields: [field2], references: [id], onDelete: Cascade)
+  field4 Int @unique
+  field5 CV  @relation(fields: [field4], references: [id], onDelete: Cascade)
+
+  @@index([field2])
+  @@index([field4])
+}
+
+model CX {
+  id Int @id @default(autoincrement())
+
+  field1 String  @db.VarChar(255)
+  field2 Int
+  field3 Int
+  field4 Int     @default(0)
+  field5 Int
+  field6 String? @db.Text
+  field7 String? @db.Text
+
+  field8 DA  @relation("CX", fields: [field9], references: [id], onDelete: Cascade)
+  field9 Int @unique
+}
+
+model CY {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1  String  @db.VarChar(255)
+  field2  Int
+  field3  Int
+  field4  Int     @default(0)
+  field5  Int
+  field6  FEnum
+  field7  String? @db.VarChar(255)
+  field8  String? @db.VarChar(255)
+  field9  String  @db.Text
+  field10 String  @db.Text
+
+  field11 DA  @relation("CY", fields: [field12], references: [id], onDelete: Cascade)
+  field12 Int @unique
+}
+
+model CZ {
+  id Int @id @default(autoincrement())
+
+  field1 String  @db.VarChar(255)
+  field2 String  @db.VarChar(255)
+  field3 String? @db.VarChar(1000)
+
+  field4 User @relation("InstanceTemplateTaskHandledBy", fields: [field5], references: [id], onDelete: Restrict)
+  field5 Int
+  field6 DA   @relation("Task", fields: [field7], references: [id], onDelete: Cascade)
+  field7 Int
+
+  @@index([field5])
+  @@index([field7])
+}
+
+model DA {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1  String                   @db.VarChar(255)
+  field2  InstanceApproachTypeEnum
+  field3  String                   @db.VarChar(255)
+  field4  InstanceDifficultyEnum
+  field5  String                   @db.VarChar(255)
+  field6  String                   @db.VarChar(255)
+  field7  Int
+  field8  DateTime
+  field9  String?                  @db.VarChar(2000)
+  field10 String?                  @db.VarChar(255)
+  field11 TvaStatusCategoryEnum?
+  field12 Boolean?
+  field13 Boolean?
+  field14 String?                  @db.VarChar(255)
+
+  field15 User @relation("InstanceTemplateHandledBy", fields: [field16], references: [id], onDelete: Restrict)
+  field16 Int
+  field17 User @relation("InstanceTemplateCreator", fields: [field18], references: [id], onDelete: Restrict)
+  field18 Int
+  field19 User @relation("InstanceTemplateUpdater", fields: [field20], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  field20 Int
+  field21 CX?  @relation("CX")
+  field22 CY?  @relation("CY")
+
+  field23 CZ[] @relation("Task")
+
+  @@index([field16])
+  @@index([field18])
+  @@index([field20])
+}
+
+enum InstanceConcernEnum {
+  documents
+  data
+  tasks
+  status
+  incompleteFeedback
+  reminderEmail
+  reminderSms
+}
+
+enum InstanceDifficultyEnum {
+  easy
+  medium
+  hard
+}
+
+enum InstanceAskStatusEnum {
+  done
+  pending
+  progress
+}
+
+enum InstanceTaskStatusEnum {
+  done
+  todo
+  progress
+}
+
+enum InstanceDocumentTypeEnum {
+  CITYHALL
+  CONNECTOR
+  CONSULTANT
+  RESIDENT
+  RESIDENT_APPROACH
+  ISOLATION
+  PAC
+  PRIME_RENOV
+  SSC
+  TVA
+}
+
+enum InstanceDataTypeEnum {
+  CITYHALL
+  CONNECTOR
+  CONSULTANT
+  RESIDENT
+  ISOLATION
+  PAC
+  PRIME_RENOV
+  SSC
+  TVA
+}
+
+model DB {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  field1 String                   @db.VarChar(255)
+  field2 InstanceDocumentTypeEnum
+  field3 String                   @db.VarChar(255)
+  field4 Boolean
+  field5 InstanceAskStatusEnum    @default(pending)
+  field6 String?                  @db.VarChar(255)
+
+  field7 DL  @relation("Document", fields: [field8], references: [id], onDelete: Cascade)
+  field8 Int
+
+  @@index([field8])
+}
+
+model DC {
+  id Int @id @default(autoincrement())
+
+  field1 String                @db.VarChar(255)
+  field2 InstanceDataTypeEnum
+  field3 String                @db.VarChar(255)
+  field4 Boolean
+  field5 InstanceAskStatusEnum @default(pending)
+  field6 String?               @db.VarChar(255)
+
+  field7 DL  @relation("Data", fields: [field8], references: [id], onDelete: Cascade)
+  field8 Int
+
+  @@index([field8])
+}
+
+model DD {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String                 @db.VarChar(255)
+  field2 String                 @db.VarChar(255)
+  field3 InstanceTaskStatusEnum @default(todo)
+  field4 String?                @db.VarChar(2000)
+
+  field5 User @relation("TaskHandledBy", fields: [field6], references: [id], onDelete: Restrict)
+  field6 Int
+  field7 DL   @relation("Task", fields: [field8], references: [id], onDelete: Cascade)
+  field8 Int
+
+  @@index([field6])
+  @@index([field8])
+}
+
+model DE {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 Boolean   @default(false)
+  field2 String?   @db.VarChar(255)
+  field3 String?   @db.VarChar(2000)
+  field4 DateTime?
+
+  field5  User  @relation("IncompleteFeedbackCreator", fields: [field6], references: [id], onDelete: Restrict)
+  field6  Int
+  field7  DL    @relation("IncompleteFeedback", fields: [field8], references: [id], onDelete: Cascade)
+  field8  Int
+  field9  User? @relation("IncompleteFeedbackCompletor", fields: [field10], references: [id], onDelete: Restrict)
+  field10 Int?
+
+  @@index([field6])
+  @@index([field8])
+  @@index([field10])
+}
+
+model DF {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String          @db.VarChar(1000)
+  field2 CommentTypeEnum @default(classic)
+
+  field3 DL    @relation(fields: [field4], references: [id], onDelete: Cascade)
+  field4 Int
+  field5 User? @relation("CreatedByInstanceComment", fields: [field6], references: [id], onDelete: Cascade)
+  field6 Int?
+  field7 R?    @relation("CreatedByRInstanceComment", fields: [field8], references: [id], onDelete: Cascade)
+  field8 Int?
+
+  @@index([field6])
+  @@index([field4])
+  @@index([field8])
+}
+
+model DG {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(1000)
+
+  field2 Int
+  field3 DL   @relation(fields: [field2], references: [id], onDelete: Cascade)
+  field4 Int
+  field5 User @relation(fields: [field4], references: [id], onDelete: Cascade)
+
+  @@index([field2])
+  @@index([field4])
+  @@index([createdAt, field2])
+  @@index([createdAt, field4])
+}
+
+enum ScheduledEmailHourEnum {
+  MORNING
+  MIDDAY
+  AFTERNOON
+}
+
+enum ScheduledEmailFlow {
+  APPROACH
+  FITTER
+  INSTANCE
+}
+
+model DH {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1  DateTime
+  field2  ScheduledEmailHourEnum
+  field3  FEnum
+  field4  String?                   @db.VarChar(255)
+  field5  String?                   @db.VarChar(255)
+  field6  String                    @db.VarChar(255)
+  field7  String                    @db.Text
+  field8  String                    @db.Text
+  field9  ScheduledEmailFlow
+  field10 InstanceApproachTypeEnum?
+  field11 Int
+
+  field12 User @relation("ScheduledEmailCreator", fields: [field13], references: [id], onDelete: Cascade)
+  field13 Int
+
+  @@index([field13])
+}
+
+enum EmailPortalStatusEnum {
+  PENDING
+  EXPIRED
+  DONE
+  NO_TARGET
+  TECHNICAL_ERROR
+}
+
+enum EmailPortalTargetTypeEnum {
+  FITTER
+  RELATION
+  EMPLOYEE
+  RESIDENT
+  CITYHALL
+  CONNECTOR
+  TAXCENTER
+}
+
+model DI {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1  String                    @db.VarChar(255)
+  field2  Int
+  field3  Int
+  field4  Int                       @default(1)
+  field5  String                    @unique @db.VarChar(255)
+  field6  DateTime                  @default(now())
+  field7  EmailPortalStatusEnum     @default(PENDING)
+  field8  EmailPortalTargetTypeEnum
+  field9  DateTime
+  field10 DateTime?
+  field11 Int
+  field12 Boolean?                  @default(false)
+  field13 String?                   @db.VarChar(255)
+  field14 String?                   @db.Text
+  field15 String?                   @db.Text
+
+  field16 DL   @relation("DI", fields: [field17], references: [id], onDelete: Cascade)
+  field17 Int
+  field18 AM?  @relation("CityHallEmailPortalTarget", fields: [field19], references: [id], onDelete: Restrict)
+  field19 Int?
+  field20 AS?  @relation("ConnectorEmailPortalTarget", fields: [field21], references: [id], onDelete: Restrict)
+  field21 Int?
+  field22 R?   @relation("REmailPortalTarget", fields: [field23], references: [id], onDelete: Restrict)
+  field23 Int?
+  field24 AK?  @relation("AKEmailPortalTarget", fields: [field25], references: [id], onDelete: SetNull)
+  field25 Int?
+  field26 AQ?  @relation("AQEmailPortalTarget", fields: [field27], references: [id], onDelete: SetNull)
+  field27 Int?
+  field28 Y?   @relation("REmployeeEmailPortalTarget", fields: [field29], references: [id], onDelete: SetNull)
+  field29 Int?
+  field30 AF?  @relation("AFEmailPortalTarget", fields: [field31], references: [id], onDelete: Restrict)
+  field31 Int?
+  field32 AW?  @relation("TaxCenterEmailPortalTarget", fields: [field33], references: [id], onDelete: Restrict)
+  field33 Int?
+  field34 AT?  @relation("ATEmailPortalTarget", fields: [field35], references: [id], onDelete: SetNull)
+  field35 Int?
+
+  @@index([field17])
+  @@index([field19])
+  @@index([field21])
+  @@index([field23])
+  @@index([field25])
+  @@index([field27])
+  @@index([field29])
+  @@index([field31])
+  @@index([field33])
+  @@index([field35])
+}
+
+enum InstanceStatusEnum {
+  new
+  pending
+  review
+  closed
+}
+
+enum InstanceTriggerEnum {
+  manual
+  automatic
+}
+
+enum InstanceApproachTypeEnum {
+  CITYHALL
+  CONNECTOR
+  CONSULTANT
+  ISOLATION
+  SSC
+  PAC
+  PRIME_RENOV
+  TVA
+}
+
+model DJ {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 InstanceConcernEnum
+
+  field2 DL  @relation(fields: [field3], references: [id], onDelete: Cascade)
+  field3 Int
+
+  @@index([field3])
+}
+
+enum InstanceEmailTypeEnum {
+  manual
+  reminder
+  portal
+}
+
+model DK {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String                @db.Text
+  field2 InstanceEmailTypeEnum
+
+  field3 DL  @relation(fields: [field4], references: [id], onDelete: Cascade)
+  field4 Int
+
+  @@index([field4])
+}
+
+model DL {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1  InstanceDifficultyEnum
+  field2  String?                  @db.VarChar(255)
+  field3  InstanceStatusEnum       @default(new)
+  field4  String                   @db.VarChar(255)
+  field5  String                   @unique @db.VarChar(255)
+  field6  DateTime
+  field7  Float
+  field8  InstanceApproachTypeEnum
+  field9  String                   @db.VarChar(255)
+  field10 String?                  @db.VarChar(2000)
+  field11 InstanceTriggerEnum      @default(manual)
+  field12 DateTime?
+
+  field13 User @relation("InstanceHandledBy", fields: [field14], references: [id], onDelete: Restrict)
+  field14 Int
+  field15 User @relation("InstanceCreator", fields: [field16], references: [id], onDelete: Restrict)
+  field16 Int
+  field17 User @relation("InstanceUpdater", fields: [field18], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  field18 Int
+  field19 BH?  @relation("BH", fields: [field20], references: [id], onDelete: Cascade)
+  field20 Int?
+  field21 BV?  @relation("BV", fields: [field22], references: [id], onDelete: Cascade)
+  field22 Int?
+  field23 CD?  @relation("CD", fields: [field24], references: [id], onDelete: Cascade)
+  field24 Int?
+  field25 EG?  @relation("EG", fields: [field26], references: [id], onDelete: Cascade)
+  field26 Int?
+  field27 EN?  @relation("EN", fields: [field28], references: [id], onDelete: Cascade)
+  field28 Int?
+  field29 EU?  @relation("EU", fields: [field30], references: [id], onDelete: Cascade)
+  field30 Int?
+  field31 BL?  @relation("BL", fields: [field32], references: [id], onDelete: Cascade)
+  field32 Int?
+  field33 CV?  @relation("TvaApproachGeneral", fields: [field34], references: [id], onDelete: Cascade)
+  field34 Int?
+  field35 CV?  @relation("TvaApproachTaxes", fields: [field36], references: [id], onDelete: Cascade)
+  field36 Int?
+  field37 CV?  @relation("TvaApproachEdf", fields: [field38], references: [id], onDelete: Cascade)
+  field38 Int?
+  field39 DV[] @relation("DV")
+  field40 FI?  @relation("FI")
+
+  field41 DI[] @relation("DI")
+  field42 DB[] @relation("Document")
+  field43 DC[] @relation("Data")
+  field44 DD[] @relation("Task")
+  field45 DE[] @relation("IncompleteFeedback")
+  field46 DF[]
+  field47 DG[]
+  field48 DQ[] @relation("ApproachStatusChangeInstance")
+  field49 DJ[]
+  field50 DK[]
+
+  @@index([field14])
+  @@index([field16])
+  @@index([field18])
+  @@index([field20])
+  @@index([field22])
+  @@index([field24])
+  @@index([field26])
+  @@index([field28])
+  @@index([field30])
+  @@index([field32])
+  @@index([field34])
+  @@index([field36])
+  @@index([field38])
+}
+
+enum EmailTemplateRecipientEnum {
+  FITTER
+  RESIDENT
+  CITYHALL
+  CONNECTOR
+  TAXCENTER
+}
+
+enum EmailTemplateTagEnum {
+  FITTER
+  RESIDENT
+  APPROACH
+  CITYHALL_ORGANISM
+  CONNECTOR_ORGANISM
+  TAXCENTER_ORGANISM
+  GENERAL
+}
+
+enum TvaStatusCategoryEnum {
+  TAXES
+  EDF
+  GENERAL
+}
+
+model DM {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1  String                      @db.VarChar(255)
+  field2  String?                     @db.VarChar(255)
+  field3  InstanceApproachTypeEnum?
+  field4  TvaStatusCategoryEnum?
+  field5  EmailTemplateRecipientEnum?
+  field6  FEnum
+  field7  String?                     @db.VarChar(255)
+  field8  String?                     @db.VarChar(255)
+  field9  String                      @db.Text
+  field10 String                      @db.Text
+}
+
+model DN {
+  id Int @id @default(autoincrement())
+
+  field1 String  @db.VarChar(255)
+  field2 String  @db.VarChar(255)
+  field3 String? @db.VarChar(2000)
+
+  field4 User @relation("AutomaticTaskHandledBy", fields: [field5], references: [id], onDelete: Restrict)
+  field5 Int
+  field6 DP   @relation("Task", fields: [field7], references: [id], onDelete: Cascade)
+  field7 Int
+
+  @@index([field5])
+  @@index([field7])
+}
+
+model DO {
+  id Int @id @default(autoincrement())
+
+  field1 String  @db.VarChar(255)
+  field2 Int
+  field3 Int
+  field4 Int     @default(0)
+  field5 Int
+  field6 String? @db.Text
+  field7 String? @db.Text
+
+  field8 DP  @relation("DO", fields: [field9], references: [id], onDelete: Cascade)
+  field9 Int @unique
+}
+
+model DP {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1  String                   @db.VarChar(255)
+  field2  InstanceApproachTypeEnum
+  field3  String                   @db.VarChar(255)
+  field4  String?                  @db.VarChar(255)
+  field5  String?                  @db.VarChar(255)
+  field6  String?                  @db.VarChar(255)
+  field7  Int
+  field8  InstanceDifficultyEnum
+  field9  String                   @db.VarChar(255)
+  field10 String                   @db.VarChar(255)
+  field11 Int
+  field12 DateTime
+  field13 String?                  @db.VarChar(2000)
+  field14 String?                  @db.VarChar(255)
+  field15 BHSendTypeEnum?
+  field16 TvaStatusCategoryEnum?
+  field17 Boolean?
+  field18 Boolean?
+  field19 String?                  @db.VarChar(255)
+
+  field20 User @relation("AutomaticInstanceHandledBy", fields: [field21], references: [id], onDelete: Restrict)
+  field21 Int
+  field22 User @relation("AutomaticInstanceCreator", fields: [field23], references: [id], onDelete: Restrict)
+  field23 Int
+  field24 User @relation("AutomaticInstanceUpdater", fields: [field25], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  field25 Int
+  field26 DO?  @relation("DO")
+  field27 DW?  @relation("DW")
+  field28 FJ?  @relation("FJ")
+
+  field29 DN[] @relation("Task")
+
+  @@index([field21])
+  @@index([field23])
+  @@index([field25])
+}
+
+model DQ {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 String? @db.VarChar(1000)
+  field2 String  @db.VarChar(255)
+  field3 String  @db.VarChar(255)
+  field4 Boolean @default(false)
+  field5 Boolean @default(false)
+
+  field6  BH?   @relation(fields: [field7], references: [id], onDelete: Cascade)
+  field7  Int?
+  field8  BV?   @relation(fields: [field9], references: [id], onDelete: Cascade)
+  field9  Int?
+  field10 CD?   @relation(fields: [field11], references: [id], onDelete: Cascade)
+  field11 Int?
+  field12 CK?   @relation(fields: [field13], references: [id], onDelete: Cascade)
+  field13 Int?
+  field14 EG?   @relation(fields: [field15], references: [id], onDelete: Cascade)
+  field15 Int?
+  field16 CV?   @relation(fields: [field17], references: [id], onDelete: Cascade)
+  field17 Int?
+  field18 User? @relation("ApproachStatusChangeUser", fields: [field19], references: [id], onDelete: Cascade)
+  field19 Int?
+  field20 DL?   @relation("ApproachStatusChangeInstance", fields: [field21], references: [id], onDelete: Cascade)
+  field21 Int?
+  field22 EN?   @relation(fields: [field23], references: [id], onDelete: Cascade)
+  field23 Int?
+  field24 EU?   @relation(fields: [field25], references: [id], onDelete: Cascade)
+  field25 Int?
+  field26 BL?   @relation(fields: [field27], references: [id], onDelete: Cascade)
+  field27 Int?
+
+  @@index([field7])
+  @@index([field9])
+  @@index([field11])
+  @@index([field13])
+  @@index([field15])
+  @@index([field17])
+  @@index([field19])
+  @@index([field21])
+  @@index([field23])
+  @@index([field25])
+  @@index([field27])
+}
+
+model DR {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String  @unique @db.VarChar(255)
+  field2 Boolean @default(false)
+  field3 Boolean @default(false)
+  field4 Boolean @default(false)
+  field5 Boolean @default(false)
+
+  field6  AI  @relation(fields: [field7], references: [id], onDelete: Cascade)
+  field7  Int
+  field8  R   @relation(fields: [field9], references: [id], onDelete: Restrict)
+  field9  Int
+  field10 BA  @relation(fields: [field11], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  field11 Int @unique
+
+  field12 BH?
+  field13 BV?
+  field14 CD?
+
+  @@index([field11])
+  @@index([field3])
+  @@index([field5])
+  @@index([field7])
+  @@index([field9])
+}
+
+enum PdfDateFormatEnum {
+  with
+  without
+}
+
+enum PdfEmailFormatEnum {
+  regular
+  prefix
+  suffix
+}
+
+enum PdfPhoneFormatEnum {
+  plusThreeThree
+  zeroSix
+  threeThree
+  zeroSixWithoutSpaces
+}
+
+enum PdfReceiptFormatEnum {
+  standard
+  withoutPrefix
+  dept
+  commune
+  year
+  folder
+}
+
+enum PdfTvaFormatEnum {
+  with
+  without
+}
+
+enum PdfPriceFormatEnum {
+  with
+  without
+}
+
+enum PdfSuffixFormatEnum {
+  with
+  without
+}
+
+enum PdfCadastralFormatEnum {
+  fullPlot
+  prefix
+  section
+  nbr
+  area
+}
+
+enum PdfResaleModeFormatEnum {
+  rawValue
+  description
+}
+
+enum PdfFullNameFormatEnum {
+  firstLast
+  lastFirst
+}
+
+enum PdfVariableTypeEnum {
+  CITYHALL_ORGANISM
+  CITYHALL
+  CONNECTOR_ORGANISM
+  CONNECTOR
+  TAX_CENTER_ORGANISM
+  CONSULTANT
+  FITTER
+  GENERAL
+  RESIDENT
+  ISOLATION
+  SSC
+  PAC
+  TVA
+  PRIME_RENOV
+}
+
+enum PdfModelingConservationFormatEnum {
+  rawValue
+  description
+}
+
+model DS {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(255)
+  field2 String @db.VarChar(2000)
+
+  field3 Int?
+  field4 User? @relation(fields: [field3], references: [id])
+  field5 Int?
+  field6 R?    @relation(fields: [field5], references: [id])
+
+  @@index([field3])
+  @@index([field5])
+}
+
+model DT {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(255)
+  field2 String @db.VarChar(2000)
+  field3 Int    @default(0)
+
+  field4 Int?
+  field5 User? @relation(fields: [field4], references: [id])
+  field6 Int?
+  field7 R?    @relation(fields: [field6], references: [id])
+  field8 Int?
+  field9 DY?   @relation(fields: [field8], references: [id])
+
+  @@index([field4])
+  @@index([field6])
+  @@index([field8])
+}
+
+model DU {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(100)
+  field2 String @db.VarChar(100)
+  field3 String @db.VarChar(100)
+  field4 Float
+
+  field5 AF  @relation(fields: [field6], references: [id], onDelete: Cascade)
+  field6 Int
+
+  @@index([field6])
+}
+
+model DV {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1  String                    @db.VarChar(255)
+  field2  String                    @db.VarChar(255)
+  field3  Int
+  field4  Int
+  field5  Int                       @default(1)
+  field6  DateTime                  @default(now())
+  field7  Boolean                   @default(true)
+  field8  EmailPortalTargetTypeEnum
+  field9  Int
+  field10 FEnum
+  field11 String?                   @db.VarChar(255)
+  field12 String?                   @db.VarChar(255)
+  field13 String                    @db.Text
+  field14 String                    @db.Text
+
+  field15 DL    @relation("DV", fields: [field16], references: [id], onDelete: Cascade)
+  field16 Int
+  field17 AM?   @relation("CityHallReminderEmailTarget", fields: [field18], references: [id], onDelete: Restrict)
+  field18 Int?
+  field19 AS?   @relation("ConnectorReminderEmailTarget", fields: [field20], references: [id], onDelete: Restrict)
+  field20 Int?
+  field21 R?    @relation("RReminderEmailTarget", fields: [field22], references: [id], onDelete: Restrict)
+  field22 Int?
+  field23 AK?   @relation("AKReminderEmailTarget", fields: [field24], references: [id], onDelete: Restrict)
+  field24 Int?
+  field25 AQ?   @relation("AQReminderEmailTarget", fields: [field26], references: [id], onDelete: Restrict)
+  field26 Int?
+  field27 Y?    @relation("REmployeeReminderEmailTarget", fields: [field28], references: [id], onDelete: Restrict)
+  field28 Int?
+  field29 AF?   @relation("AFReminderEmailTarget", fields: [field30], references: [id], onDelete: Restrict)
+  field30 Int?
+  field31 AW?   @relation("TaxCenterReminderEmailTarget", fields: [field32], references: [id], onDelete: Restrict)
+  field32 Int?
+  field33 AT?   @relation("ATReminderEmailTarget", fields: [field34], references: [id], onDelete: Restrict)
+  field34 Int?
+  field35 User? @relation("InstanceReminderEmailCreatedBy", fields: [field36], references: [id], onDelete: Restrict)
+  field36 Int?
+
+  @@index([field16])
+  @@index([field18])
+  @@index([field20])
+  @@index([field22])
+  @@index([field24])
+  @@index([field26])
+  @@index([field28])
+  @@index([field30])
+  @@index([field32])
+  @@index([field34])
+  @@index([field36])
+}
+
+model DW {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1  String  @db.VarChar(255)
+  field2  Int
+  field3  Int
+  field4  Int     @default(0)
+  field5  Int
+  field6  FEnum
+  field7  String? @db.VarChar(255)
+  field8  String? @db.VarChar(255)
+  field9  String  @db.Text
+  field10 String  @db.Text
+
+  field11 DP  @relation("DW", fields: [field12], references: [id], onDelete: Cascade)
+  field12 Int @unique
+}
+
+model DX {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 String @db.VarChar(255)
+  field2 String @db.VarChar(255)
+
+  field3 Int
+  field4 User @relation("CreatedBySuggestion", fields: [field3], references: [id], onDelete: Cascade)
+
+  field5 User[] @relation("UpvotedBySuggestions")
+
+  @@index([field3])
+}
+
+model DY {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(255)
+  field2 String @db.VarChar(255)
+  field3 Int    @default(0)
+
+  field4 Int?
+  field5 User? @relation(fields: [field4], references: [id])
+  field6 Int?
+  field7 R?    @relation(fields: [field6], references: [id])
+
+  field8 DT[]
+
+  @@index([field4])
+  @@index([field6])
+}
+
+model DZ {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String    @db.VarChar(255)
+  field2 Boolean   @default(false)
+  field3 Boolean   @default(false)
+  field4 DateTime?
+  field5 DateTime?
+  field6 String?   @db.VarChar(255)
+
+  field7  Int?
+  field8  User? @relation("NotificationTarget", fields: [field7], references: [id], onDelete: Cascade)
+  field9  Int?
+  field10 R?    @relation("NotificationRTarget", fields: [field9], references: [id], onDelete: Cascade)
+  field11 Int?
+  field12 User? @relation("NotificationCreator", fields: [field11], references: [id], onDelete: Cascade)
+
+  @@index([field7])
+  @@index([field9])
+  @@index([field11])
+}
+
+model EA {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 String @db.VarChar(255)
+  field2 String @db.VarChar(255)
+  field3 String @db.VarChar(255)
+
+  field4 EG[]
+}
+
+enum IsolationApproachStatusEnum {
+  PENDING_DECISION
+  PENDING_RECEIPT
+  PENDING_APPROVAL
+  TACIT_APPROVAL
+  APPROVAL
+  REFUSAL
+}
+
+enum IsolationWorkTypeEnum {
+  renovation
+  isolation
+}
+
+enum IsolationApproachDocumentTypeEnum {
+  cityHallLetterIsolationApproach
+  photoEditingIsolationApproach
+  depositReceiptIsolationApproach
+  deadlineExtensionIsolationApproach
+  mandateIsolationApproach
+  refusalIsolationApproach
+  agreementIsolationApproach
+  complement1IsolationApproach
+  complement2IsolationApproach
+  complement3IsolationApproach
+  complement4IsolationApproach
+  complement5IsolationApproach
+  cerfaIsolationApproach
+  annexesIsolationApproach
+  daactIsolationApproach
+  miscellaneous1IsolationApproach
+  miscellaneous2IsolationApproach
+  miscellaneous3IsolationApproach
+  miscellaneous4IsolationApproach
+  miscellaneous5IsolationApproach
+  otherIsolationApproach
+}
+
+model EB {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 String?                           @db.VarChar(255)
+  field2 IsolationApproachDocumentTypeEnum
+
+  field3 EG  @relation(fields: [field4], references: [id], onDelete: Cascade)
+  field4 Int
+
+  @@index([field4])
+}
+
+enum CoatingFinishTypeEnum {
+  FLOATED
+  SMOOTHED
+  RIBBED
+  SPRAYED
+  SCRAPED
+  STONE_LOOK
+}
+
+enum InsulationMaterialEnum {
+  POLYSTYRENE
+  ROCK_WOOL
+}
+
+enum WindowTypeEnum {
+  DOUBLE_GLAZED
+  SINGLE_GLAZED
+  ITR_DOUBLE_GLAZED
+  TRIPLE_GLAZED
+}
+
+enum WindowMaterialEnum {
+  PVC
+  WOOD
+  ALUMINUM
+  MIX
+}
+
+model EC {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(255)
+
+  field2 Int @unique
+  field3 EG  @relation(fields: [field2], references: [id], onDelete: Cascade)
+}
+
+model ED {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(1000)
+
+  field2 Int
+  field3 EG    @relation("ED", fields: [field2], references: [id], onDelete: Cascade)
+  field4 Int?
+  field5 User? @relation("IsolationApproachCreatedByHistory", fields: [field4], references: [id], onDelete: Cascade)
+
+  @@index([field2])
+  @@index([field4])
+  @@index([createdAt, field2])
+  @@index([createdAt, field4])
+}
+
+model EE {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String? @db.VarChar(255)
+
+  field2 EF  @relation("EE", fields: [field3], references: [id], onDelete: Cascade)
+  field3 Int
+
+  @@index([field3])
+}
+
+model EF {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String          @db.VarChar(1000)
+  field2 CommentTypeEnum @default(classic)
+
+  field3 EG    @relation(fields: [field4], references: [id], onDelete: Cascade)
+  field4 Int
+  field5 User? @relation("CreatedByIsolationApproachComment", fields: [field6], references: [id], onDelete: Cascade)
+  field6 Int?
+  field7 R?    @relation("CreatedByRIsolationApproachComment", fields: [field8], references: [id], onDelete: Cascade)
+  field8 Int?
+
+  field9 EE[] @relation("EE")
+
+  @@index([field6])
+  @@index([field4])
+  @@index([field8])
+}
+
+enum WindowColorEnum {
+  WHITE
+  SAME_AS_EXISTING
+  BEIGE
+  BLACK
+  GREY
+}
+
+enum WindowAEnum {
+  EUROPLAST
+  DECEUNINCK
+  ALUPLAST
+  VEKA
+  TECHNAL
+  PROFILS_SYSTEMES
+  REHAU
+  KOMMERLING
+  WICONASCHUCO
+  CLIENT_CHOICE
+}
+
+model EG {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1  String                      @unique @db.VarChar(255)
+  field2  IsolationApproachStatusEnum @default(PENDING_DECISION)
+  field3  ApproachStateEnum           @default(NORMAL)
+  field4  Int                         @default(0)
+  field5  String                      @db.VarChar(255)
+  field6  String                      @db.VarChar(255)
+  field7  Int?
+  field8  InsulationMaterialEnum?
+  field9  YesOrNoEnum?
+  field10 Int?
+  field11 WindowTypeEnum?
+  field12 Int?
+  field13 YesOrNoEnum?
+  field14 YesOrNoEnum                 @default(yes)
+  field15 String?                     @db.VarChar(255)
+  field16 WindowColorEnum?
+  field17 WindowAEnum?
+
+  field18 DateTime?
+  field19 BHSendTypeEnum?
+  field20 String?                @db.VarChar(255)
+  field21 String?                @db.VarChar(255)
+  field22 DateTime?
+  field23 DateTime?
+  field24 DateTime?
+  field25 DateTime?
+  field26 DateTime?
+  field27 YesOrNoEnum?
+  field28 CityHallAbfOriginEnum?
+  field29 DateTime
+  field30 String?                @db.VarChar(255)
+
+  field31 Int
+  field32 AM?   @relation(fields: [field31], references: [id])
+  field33 Int
+  field34 R?    @relation(fields: [field33], references: [id])
+  field35 Int
+  field36 AF?   @relation(fields: [field35], references: [id], onDelete: Cascade)
+  field37 Int
+  field38 User? @relation("IsolationApproachCreator", fields: [field37], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  field39 Int
+  field40 User? @relation("IsolationApproachUpdater", fields: [field39], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "EG_field39_updater_fkey")
+  field41 Int?
+  field42 E?    @relation(fields: [field41], references: [id], onDelete: NoAction)
+  field43 Int?
+  field44 EA?   @relation(fields: [field45], references: [id])
+  field45 Int?
+  field46 User? @relation("IsolationApproachAttributedUser", fields: [field39], references: [id], map: "EG_field39_attributed_fkey")
+  field47 Int?
+  field48 FH?
+  field49 EC?
+  field50 BA?
+  field51 FC?   @relation("IsolationApproachFromRequest")
+
+  field52 EB[]
+  field53 DL[] @relation("EG")
+  field54 ED[] @relation("ED")
+  field55 EF[]
+  field56 DQ[]
+  field57 EW[]
+  field58 FK[]
+  field59 EH?
+
+  @@index([field11])
+  @@index([field25])
+  @@index([field14])
+  @@index([field12])
+  @@index([field13])
+  @@index([field41])
+  @@index([field39])
+  @@index([field31])
+  @@index([field33])
+  @@index([field35])
+  @@index([field37])
+  @@index([field45])
+}
+
+model EH {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(255)
+
+  field2 Int
+  field3 R   @relation(fields: [field2], references: [id], onDelete: Cascade)
+  field4 Int @unique
+  field5 EG  @relation(fields: [field4], references: [id], onDelete: Cascade)
+
+  @@index([field2])
+  @@index([field4])
+}
+
+enum SscApproachStatusEnum {
+  PENDING_DECISION
+  PENDING_RECEIPT
+  PENDING_APPROVAL
+  TACIT_APPROVAL
+  APPROVAL
+  REFUSAL
+}
+
+enum SscApproachDocumentTypeEnum {
+  cityHallLetterSscApproach
+  photoEditingSscApproach
+  depositReceiptSscApproach
+  deadlineExtensionSscApproach
+  mandateSscApproach
+  refusalSscApproach
+  agreementSscApproach
+  complement1SscApproach
+  complement2SscApproach
+  complement3SscApproach
+  complement4SscApproach
+  complement5SscApproach
+  cerfaSscApproach
+  annexesSscApproach
+  daactSscApproach
+  miscellaneous1SscApproach
+  miscellaneous2SscApproach
+  miscellaneous3SscApproach
+  miscellaneous4SscApproach
+  miscellaneous5SscApproach
+  otherSscApproach
+}
+
+model EI {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(255)
+
+  field2 Int @unique
+  field3 EN  @relation(fields: [field2], references: [id], onDelete: Cascade)
+}
+
+model EJ {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String? @db.VarChar(255)
+
+  field2 EK  @relation("EJ", fields: [field3], references: [id], onDelete: Cascade)
+  field3 Int
+
+  @@index([field3])
+}
+
+model EK {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String          @db.VarChar(1000)
+  field2 CommentTypeEnum @default(classic)
+
+  field3 EN    @relation(fields: [field4], references: [id], onDelete: Cascade)
+  field4 Int
+  field5 User? @relation("CreatedBySscApproachComment", fields: [field6], references: [id], onDelete: Cascade)
+  field6 Int?
+  field7 R?    @relation("CreatedByRSscApproachComment", fields: [field8], references: [id], onDelete: Cascade)
+  field8 Int?
+
+  field9 EJ[] @relation("EJ")
+
+  @@index([field6])
+  @@index([field4])
+  @@index([field8])
+}
+
+model EL {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(1000)
+
+  field2 Int
+  field3 EN    @relation("EL", fields: [field2], references: [id], onDelete: Cascade)
+  field4 Int?
+  field5 User? @relation("SscApproachCreatedByHistory", fields: [field4], references: [id], onDelete: Cascade)
+
+  @@index([field2])
+  @@index([field4])
+  @@index([createdAt, field2])
+  @@index([createdAt, field4])
+}
+
+model EM {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 String?                     @db.VarChar(255)
+  field2 SscApproachDocumentTypeEnum
+
+  field3 EN  @relation(fields: [field4], references: [id], onDelete: Cascade)
+  field4 Int
+
+  @@index([field4])
+}
+
+model EN {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1  String                 @unique @db.VarChar(255)
+  field2  SscApproachStatusEnum  @default(PENDING_DECISION)
+  field3  ApproachStateEnum      @default(NORMAL)
+  field4  Int                    @default(0)
+  field5  DateTime?
+  field6  BHSendTypeEnum?
+  field7  String?                @db.VarChar(255)
+  field8  String?                @db.VarChar(255)
+  field9  DateTime?
+  field10 DateTime?
+  field11 DateTime?
+  field12 DateTime?
+  field13 DateTime?
+  field14 YesOrNoEnum?
+  field15 CityHallAbfOriginEnum?
+  field16 DateTime
+  field17 String?                @db.VarChar(255)
+  field18 String?                @db.VarChar(255)
+
+  field19 Int
+  field20 AM?   @relation(fields: [field19], references: [id])
+  field21 Int
+  field22 R?    @relation(fields: [field21], references: [id])
+  field23 Int
+  field24 AF?   @relation(fields: [field23], references: [id], onDelete: Cascade)
+  field25 Int
+  field26 User? @relation("SscApproachCreator", fields: [field25], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  field27 Int
+  field28 User? @relation("SscApproachUpdater", fields: [field27], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  field29 Int?
+  field30 E?    @relation(fields: [field31], references: [id], onDelete: NoAction)
+  field31 Int?
+  field32 User? @relation("SscApproachAttributedUser", fields: [field33], references: [id])
+  field33 Int?
+  field34 FH?
+  field35 EI?
+  field36 BA?
+  field37 FC?   @relation("SscApproachFromRequest")
+
+  field38 EM[]
+  field39 DL[] @relation("EN")
+  field40 EL[] @relation("EL")
+  field41 EK[]
+  field42 DQ[]
+  field43 EW[]
+  field44 FK[]
+  field45 EO?
+
+  @@index([field11])
+  @@index([field25])
+  @@index([field14])
+  @@index([field12])
+  @@index([field13])
+  @@index([field19])
+  @@index([field21])
+  @@index([field23])
+  @@index([field25], map: "EN_field25_2_idx")
+  @@index([field27])
+  @@index([field31])
+  @@index([field33])
+}
+
+model EO {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(255)
+
+  field2 Int
+  field3 R   @relation(fields: [field2], references: [id], onDelete: Cascade)
+  field4 Int @unique
+  field5 EN  @relation(fields: [field4], references: [id], onDelete: Cascade)
+
+  @@index([field2])
+  @@index([field4])
+}
+
+enum PacApproachStatusEnum {
+  PENDING_DECISION
+  PENDING_RECEIPT
+  PENDING_APPROVAL
+  TACIT_APPROVAL
+  APPROVAL
+  REFUSAL
+}
+
+enum PacApproachDocumentTypeEnum {
+  cityHallLetterPacApproach
+  photoEditingPacApproach
+  depositReceiptPacApproach
+  deadlineExtensionPacApproach
+  mandatePacApproach
+  refusalPacApproach
+  agreementPacApproach
+  complement1PacApproach
+  complement2PacApproach
+  complement3PacApproach
+  complement4PacApproach
+  complement5PacApproach
+  cerfaPacApproach
+  annexesPacApproach
+  daactPacApproach
+  miscellaneous1PacApproach
+  miscellaneous2PacApproach
+  miscellaneous3PacApproach
+  miscellaneous4PacApproach
+  miscellaneous5PacApproach
+  otherPacApproach
+}
+
+model EP {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(255)
+
+  field2 Int @unique
+  field3 EU  @relation(fields: [field2], references: [id], onDelete: Cascade)
+}
+
+model EQ {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String? @db.VarChar(255)
+
+  field2 ER  @relation("EQ", fields: [field3], references: [id], onDelete: Cascade)
+  field3 Int
+
+  @@index([field3])
+}
+
+model ER {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String          @db.VarChar(1000)
+  field2 CommentTypeEnum @default(classic)
+
+  field3 EU    @relation(fields: [field4], references: [id], onDelete: Cascade)
+  field4 Int
+  field5 User? @relation("CreatedByPacApproachComment", fields: [field6], references: [id], onDelete: Cascade)
+  field6 Int?
+  field7 R?    @relation("CreatedByRPacApproachComment", fields: [field8], references: [id], onDelete: Cascade)
+  field8 Int?
+
+  field9 EQ[] @relation("EQ")
+
+  @@index([field6])
+  @@index([field4])
+  @@index([field8])
+}
+
+model ES {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(1000)
+
+  field2 Int
+  field3 EU    @relation("ES", fields: [field2], references: [id], onDelete: Cascade)
+  field4 Int?
+  field5 User? @relation("PacApproachCreatedByHistory", fields: [field4], references: [id], onDelete: Cascade)
+
+  @@index([field2])
+  @@index([field4])
+  @@index([createdAt, field2])
+  @@index([createdAt, field4])
+}
+
+model ET {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 String?                     @db.VarChar(255)
+  field2 PacApproachDocumentTypeEnum
+
+  field3 EU  @relation(fields: [field4], references: [id], onDelete: Cascade)
+  field4 Int
+
+  @@index([field4])
+}
+
+model EU {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1  String                 @unique @db.VarChar(255)
+  field2  PacApproachStatusEnum  @default(PENDING_DECISION)
+  field3  ApproachStateEnum      @default(NORMAL)
+  field4  Int                    @default(0)
+  field5  DateTime?
+  field6  BHSendTypeEnum?
+  field7  String?                @db.VarChar(255)
+  field8  String?                @db.VarChar(255)
+  field9  DateTime?
+  field10 DateTime?
+  field11 DateTime?
+  field12 DateTime?
+  field13 DateTime?
+  field14 YesOrNoEnum?
+  field15 CityHallAbfOriginEnum?
+  field16 Int
+  field17 YesOrNoEnum?
+  field18 DateTime
+  field19 String?                @db.VarChar(255)
+  field20 String?                @db.VarChar(255)
+
+  field21 Int
+  field22 AM?   @relation(fields: [field21], references: [id])
+  field23 Int
+  field24 R?    @relation(fields: [field25], references: [id])
+  field25 Int?
+  field26 AF?   @relation(fields: [field27], references: [id], onDelete: Cascade)
+  field27 Int?
+  field28 User? @relation("PacApproachCreator", fields: [field29], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  field29 Int?
+  field30 User? @relation("PacApproachUpdater", fields: [field31], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  field31 Int?
+  field32 E?    @relation(fields: [field33], references: [id], onDelete: NoAction)
+  field33 Int?
+  field34 User? @relation("PacApproachAttributedUser", fields: [field35], references: [id])
+  field35 Int?
+  field36 FH?
+  field37 EP?
+  field38 BA?
+  field39 FC?   @relation("PacApproachFromRequest")
+
+  field40 ET[]
+  field41 DL[] @relation("EU")
+  field42 ES[] @relation("ES")
+  field43 ER[]
+  field44 DQ[]
+  field45 EW[]
+  field46 FK[]
+  field47 EV?
+
+  @@index([field11])
+  @@index([field25])
+  @@index([field14])
+  @@index([field12])
+  @@index([field13])
+  @@index([field21])
+  @@index([field23])
+  @@index([field25], map: "EU_field25_2_idx")
+  @@index([field27])
+  @@index([field29])
+  @@index([field31])
+  @@index([field33])
+  @@index([field35])
+}
+
+model EV {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(255)
+
+  field2 Int
+  field3 R   @relation(fields: [field2], references: [id], onDelete: Cascade)
+  field4 Int @unique
+  field5 EU  @relation(fields: [field4], references: [id], onDelete: Cascade)
+
+  @@index([field2])
+  @@index([field4])
+}
+
+enum ApproachStateEnum {
+  NORMAL
+  BLOCKING
+  CRITICAL
+}
+
+model EW {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 ApproachStateEnum?
+  field2 ApproachStateEnum
+
+  field3  BH?   @relation(fields: [field4], references: [id], onDelete: Cascade, map: "EW_field4_fkey")
+  field4  Int?
+  field5  BV?   @relation(fields: [field6], references: [id], onDelete: Cascade)
+  field6  Int?
+  field7  CD?   @relation(fields: [field8], references: [id], onDelete: Cascade)
+  field8  Int?
+  field9  CK?   @relation(fields: [field10], references: [id], onDelete: Cascade)
+  field10 Int?
+  field11 EG?   @relation(fields: [field12], references: [id], onDelete: Cascade)
+  field12 Int?
+  field13 CV?   @relation(fields: [field14], references: [id], onDelete: Cascade)
+  field14 Int?
+  field15 User? @relation("ApproachStateChangeHistoryUser", fields: [field16], references: [id], onDelete: Cascade, map: "EW_field16_fkey")
+  field16 Int?
+  field17 EN?   @relation(fields: [field18], references: [id], onDelete: Cascade)
+  field18 Int?
+  field19 EU?   @relation(fields: [field20], references: [id], onDelete: Cascade)
+  field20 Int?
+  field21 BL?   @relation(fields: [field22], references: [id], onDelete: Cascade)
+  field22 Int?
+
+  @@index([field16])
+  @@index([field18])
+  @@index([field20])
+  @@index([field22])
+  @@index([field14])
+  @@index([field12])
+  @@index([field10])
+  @@index([field8])
+  @@index([field6])
+  @@index([field4])
+}
+
+model EX {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 String @db.VarChar(255)
+  field2 String @unique @db.VarChar(255)
+
+  field3 User[] @relation("EX")
+}
+
+model EY {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 ApproachTypeEnum
+  field2 Int
+  field3 Boolean
+  field4 Boolean
+  field5 Boolean
+
+  field6 Int
+  field7 User @relation("UserNotifiedByApproach", fields: [field6], references: [id], onDelete: Cascade)
+  field8 Int
+  field9 AF   @relation("AFTriggeringNotification", fields: [field8], references: [id], onDelete: Cascade)
+
+  @@index([field6])
+  @@index([field8])
+}
+
+model EZ {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 ApproachTypeEnum
+
+  field2 Int
+  field3 FC  @relation(fields: [field2], references: [id], onDelete: Cascade)
+
+  @@index([field2])
+}
+
+enum ApproachRequestStatusEnum {
+  NEW
+  PENDING
+  CANCELED
+  VALIDATED
+  INCOMPLETE
+}
+
+model FA {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String? @db.VarChar(255)
+
+  field2 FB  @relation("FA", fields: [field3], references: [id], onDelete: Cascade)
+  field3 Int
+
+  @@index([field3])
+}
+
+model FB {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(1000)
+
+  field2 FC    @relation(fields: [field3], references: [id], onDelete: Cascade)
+  field3 Int
+  field4 User? @relation("CreatedByApproachRequestComment", fields: [field5], references: [id], onDelete: Cascade)
+  field5 Int?
+  field6 R?    @relation("CreatedByRApproachRequestComment", fields: [field7], references: [id], onDelete: Cascade)
+  field7 Int?
+
+  field8 FA[] @relation("FA")
+
+  @@index([field5])
+  @@index([field3])
+  @@index([field7])
+}
+
+model FC {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1  String                    @unique @db.VarChar(255)
+  field2  ApproachRequestStatusEnum @default(NEW)
+  field3  String                    @db.VarChar(255)
+  field4  String                    @db.VarChar(255)
+  field5  String?                   @db.VarChar(255)
+  field6  String?                   @db.VarChar(255)
+  field7  String?                   @db.VarChar(50)
+  field8  String?                   @db.VarChar(255)
+  field9  String?                   @db.VarChar(255)
+  field10 String?                   @db.VarChar(255)
+  field11 String                    @db.VarChar(255)
+  field12 String?                   @db.VarChar(255)
+  field13 String                    @db.VarChar(255)
+  field14 String                    @db.VarChar(255)
+  field15 String?                   @db.VarChar(255)
+  field16 String?                   @db.VarChar(255)
+  field17 ApproachAttributeEnum?
+  field18 ResaleModeEnum?
+  field19 Int?
+  field20 Float?
+  field21 String?                   @db.VarChar(255)
+  field22 String?                   @db.VarChar(255)
+  field23 String?                   @db.VarChar(255)
+  field24 String?                   @db.VarChar(255)
+  field25 String?                   @db.VarChar(255)
+  field26 Int?
+  field27 Int?
+  field28 Float?
+  field29 Int?
+  field30 ResaleModeEnum?
+  field31 String?                   @db.VarChar(255)
+  field32 DateTime?
+  field33 String?                   @db.VarChar(255)
+  field34 Float?
+  field35 String?                   @db.VarChar(255)
+  field36 Float?
+  field37 BatteryTypeEnum?
+  field38 EContractTypeEnum?
+  field39 String?                   @db.VarChar(255)
+  field40 CounterEnum?
+  field41 ConnectionTargetEnum?
+  field42 String?                   @db.VarChar(255)
+
+  field43 Int
+  field44 R     @relation("ApproachRequestCreator", fields: [field43], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  field45 Int?
+  field46 R?    @relation("ApproachRequestRUpdater", fields: [field45], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  field47 Int?
+  field48 User? @relation("ApproachRequestUserUpdater", fields: [field47], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  field49 Int?
+  field50 User? @relation("ApproachRequestAttributedUser", fields: [field49], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  field51 EZ[]
+  field52 FB[]
+  field53 FD[]
+
+  field54 BH?  @relation("BHFromRequest", fields: [field55], references: [id], onDelete: Cascade)
+  field55 Int? @unique
+  field56 BV?  @relation("ConnectorApproachFromRequest", fields: [field57], references: [id], onDelete: Cascade)
+  field57 Int? @unique
+  field58 CD?  @relation("ConsultantApproachFromRequest", fields: [field59], references: [id], onDelete: Cascade)
+  field59 Int? @unique
+  field60 EG?  @relation("IsolationApproachFromRequest", fields: [field61], references: [id], onDelete: Cascade)
+  field61 Int? @unique
+  field62 EN?  @relation("SscApproachFromRequest", fields: [field63], references: [id], onDelete: Cascade)
+  field63 Int? @unique
+  field64 EU?  @relation("PacApproachFromRequest", fields: [field65], references: [id], onDelete: Cascade)
+  field65 Int? @unique
+  field66 CV?  @relation("TvaApproachFromRequest", fields: [field67], references: [id], onDelete: Cascade)
+  field67 Int? @unique
+
+  @@index([field39])
+  @@index([field43])
+  @@index([field45])
+  @@index([field47])
+  @@index([field49])
+}
+
+model FD {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(1000)
+
+  field2 FC    @relation(fields: [field3], references: [id], onDelete: Cascade)
+  field3 Int
+  field4 User? @relation("ApproachRequestCreatedByUserHistory", fields: [field5], references: [id], onDelete: Cascade)
+  field5 Int?
+  field6 R?    @relation("ApproachRequestCreatedByRHistory", fields: [field7], references: [id], onDelete: Cascade)
+  field7 Int?
+
+  @@index([field3])
+  @@index([field5])
+  @@index([field7])
+}
+
+model FE {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 Int?
+  field2 Int?
+  field3 Int?
+}
+
+model FF {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 String           @db.VarChar(255)
+  field2 ApproachTypeEnum
+  field3 String           @db.Text
+
+  field4 Int
+  field5 User @relation("SmsTemplateCreatedBy", fields: [field4], references: [id], onDelete: Cascade)
+  field6 Int
+  field7 User @relation("SmsTemplateUpdatedBy", fields: [field6], references: [id], onDelete: Cascade)
+
+  field8  FG[] @relation("FG")
+  field9  FH[] @relation("FH")
+  field10 FI[] @relation("InstanceReminderSmsTemplate")
+  field11 FJ[] @relation("AutomaticInstanceReminderSmsTemplate")
+
+  @@index([field4])
+  @@index([field6])
+}
+
+model FG {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String @db.VarChar(1000)
+
+  field2 Int
+  field3 FF   @relation("FG", fields: [field2], references: [id], onDelete: Cascade)
+  field4 Int
+  field5 User @relation("SmsTemplateCreatedByHistory", fields: [field4], references: [id], onDelete: Cascade)
+
+  @@index([field2])
+  @@index([field4])
+}
+
+model FH {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 FF  @relation("FH", fields: [field2], references: [id], onDelete: Cascade)
+  field2 Int
+
+  field3  BH?  @relation(fields: [field4], references: [id], onDelete: Cascade, map: "FH_field4_fkey")
+  field4  Int? @unique
+  field5  BV?  @relation(fields: [field6], references: [id], onDelete: Cascade)
+  field6  Int? @unique
+  field7  CD?  @relation(fields: [field8], references: [id], onDelete: Cascade)
+  field8  Int? @unique
+  field9  CK?  @relation(fields: [field10], references: [id], onDelete: Cascade)
+  field10 Int? @unique
+  field11 CV?  @relation(fields: [field12], references: [id], onDelete: Cascade)
+  field12 Int? @unique
+  field13 EG?  @relation(fields: [field14], references: [id], onDelete: Cascade)
+  field14 Int? @unique
+  field15 EN?  @relation(fields: [field16], references: [id], onDelete: Cascade)
+  field16 Int? @unique
+  field17 EU?  @relation(fields: [field18], references: [id], onDelete: Cascade)
+  field18 Int? @unique
+
+  @@index([field2])
+}
+
+model FI {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 Int
+  field2 Int
+  field3 Int
+  field4 DateTime                  @default(now())
+  field5 Int
+  field6 EmailPortalTargetTypeEnum
+  field7 Boolean                   @default(true)
+
+  field8  DL   @relation("FI", fields: [field9], references: [id], onDelete: Cascade)
+  field9  Int  @unique
+  field10 FF   @relation("InstanceReminderSmsTemplate", fields: [field11], references: [id], onDelete: Cascade)
+  field11 Int
+  field12 AM?  @relation("CityHallReminderSmsTarget", fields: [field13], references: [id], onDelete: Restrict)
+  field13 Int?
+  field14 AS?  @relation("ConnectorReminderSmsTarget", fields: [field15], references: [id], onDelete: Restrict)
+  field15 Int?
+  field16 R?   @relation("RReminderSmsTarget", fields: [field17], references: [id], onDelete: Restrict)
+  field17 Int?
+  field18 AK?  @relation("AKReminderSmsTarget", fields: [field19], references: [id], onDelete: Restrict)
+  field19 Int?
+  field20 AQ?  @relation("AQReminderSmsTarget", fields: [field21], references: [id], onDelete: Restrict)
+  field21 Int?
+  field22 Y?   @relation("REmployeeReminderSmsTarget", fields: [field23], references: [id], onDelete: Restrict)
+  field23 Int?
+  field24 AF?  @relation("AFReminderSmsTarget", fields: [field25], references: [id], onDelete: Restrict)
+  field25 Int?
+  field26 AW?  @relation("TaxCenterReminderSmsTarget", fields: [field27], references: [id], onDelete: Restrict)
+  field27 Int?
+  field28 AT?  @relation("ATReminderSmsTarget", fields: [field29], references: [id], onDelete: Restrict)
+  field29 Int?
+
+  @@index([field9])
+  @@index([field11])
+  @@index([field13])
+  @@index([field15])
+  @@index([field17])
+  @@index([field19])
+  @@index([field21])
+  @@index([field23])
+  @@index([field25])
+  @@index([field27])
+  @@index([field29])
+}
+
+model FJ {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  field1 String   @db.VarChar(255)
+  field2 Int
+  field3 Int
+  field4 Int
+  field5 DateTime @default(now())
+  field6 Int
+  field7 Boolean  @default(true)
+
+  field8  DP  @relation("FJ", fields: [field9], references: [id], onDelete: Cascade)
+  field9  Int @unique
+  field10 FF  @relation("AutomaticInstanceReminderSmsTemplate", fields: [field11], references: [id], onDelete: Cascade)
+  field11 Int
+
+  @@index([field9])
+  @@index([field11])
+}
+
+model FK {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field1 EG[]
+  field2 EN[]
+  field3 EU[]
+  field4 BH[]
+  field5 BV[]
+  field6 CD[]
+  field7 CK[]
+  field8 CV[]
+}

@@ -1,0 +1,25 @@
+{
+  "name": "prisma-cascade-benchmark-old",
+  "version": "1.0.0",
+  "description": "Benchmark Prisma classic (Rust engine) with onDelete Cascade",
+  "main": "script.ts",
+  "dependencies": {
+    "prisma": "6.18.0",
+    "@prisma/client": "6.18.0",
+    "@prisma/adapter-planetscale": "6.18.0",
+    "@planetscale/database": "^1.12.0",
+    "undici": "^6.0.0",
+    "dotenv": "^16.3.1",
+    "typescript": "^5.0.0",
+    "ts-node": "^10.9.2"
+  },
+  "scripts": {
+    "generate": "yarn prisma generate",
+    "db:push": "yarn prisma db push --skip-generate",
+    "seed": "yarn ts-node seed.ts",
+    "dev": "yarn ts-node script.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0"
+  }
+}
