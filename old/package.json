@@ -4,9 +4,9 @@
   "description": "Benchmark Prisma classic (Rust engine) with onDelete Cascade",
   "main": "script.ts",
   "dependencies": {
-    "prisma": "6.18.0",
-    "@prisma/client": "6.18.0",
-    "@prisma/adapter-planetscale": "6.18.0",
+    "prisma": "6.19.0",
+    "@prisma/client": "6.19.0",
+    "@prisma/adapter-planetscale": "6.19.0",
     "@planetscale/database": "^1.12.0",
     "undici": "^6.0.0",
     "dotenv": "^16.3.1",
